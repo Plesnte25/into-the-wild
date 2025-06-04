@@ -810,7 +810,8 @@ The hospitality from the PinesAndTails team was truly exceptional. "`,
                     : "bg-white text-gray-800"
                 }`}
               >
-                
+
+
                 {button.label}
               </a>
             ))}
