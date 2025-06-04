@@ -1,0 +1,12 @@
+@media (max-width: 320px) {
+    #amenities .hidden-before-320 {
+      display: none !important;
+    }
+
+    #amenities .paddingY-320 {
+      padding-top: 0.5rem !important;
+      padding-bottom: 0.5rem !important;      
+
+    }
+
+  }

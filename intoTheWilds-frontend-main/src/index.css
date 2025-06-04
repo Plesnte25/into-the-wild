@@ -1,0 +1,169 @@
+@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Playwrite+GB+S:ital,wght@0,100..400;1,100..400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: "Montserrat", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Montserrat", sans-serif;
+}
+
+/* UTILITIES */
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Text visibility and anti-breaking styles */
+select, input, button {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: visible;
+  min-width: 200px;
+  max-width: 100%;
+}
+
+select option {
+  font-size: 1rem;
+  padding: 0.5rem;
+}
+
+/* Form labels */
+label {
+  letter-spacing: 0.05em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* RESET any conflicting styles */
+.backdrop-blur-md {
+  backdrop-filter: blur(8px); /* Added some blur */
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.bg-white\/40 {
+  background-color: rgb(255 255 255 / 0.4); /* Made less transparent */
+}
+
+.rounded-3xl {
+  border-radius: 1.5rem;
+}
+
+.inset-0 {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.absolute {
+  position: absolute;
+}
+
+/* === Search Bar and Input Styling === */
+.search-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.input-wrapper {
+  position: relative;
+  min-width: 160px;
+  flex: 1;
+}
+
+.input-wrapper label {
+  position: absolute;
+  top: -0.75rem;
+  left: 0.5rem;
+  background: white;
+  padding: 0 0.5rem;
+  font-size: 0.875rem;
+  color: #4a5568;
+  font-weight: 500;
+  border-radius: 0.25rem;
+  z-index: 1;
+}
+
+/* === Form Elements Styling === */
+input,
+select,
+button {
+  /* width: 100%; */
+  min-width: 20px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  background:none;
+  color: #1a202c;
+  transition: all 0.2s;
+  white-space: nowrap;
+  overflow: visible;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+}
+
+/* === Typography Improvements === */
+h1, h2, h3, label, p {
+  white-space: normal;
+  overflow-wrap: normal;
+  word-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+  text-overflow: ellipsis;
+}
+
+/* === Date Input Styling === */
+input[type="date"] {
+  min-width: 160px;
+  font-family: inherit;
+}
+
+/* === Guest Counter Styling === */
+.guest-counter {
+  min-width: 160px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.guest-counter label {
+  flex-shrink: 0;
+}
+
+/* COLORS (commented)
+#012258
+#F77706
+#FFFFFF
+
+#43A181
+#091F3C
+#FFFFFF
+#000000
+*/
