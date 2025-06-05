@@ -27,7 +27,8 @@ const userSchema = new mongoose.Schema({
     default: "https://www.gravatar.com/avatar/"
   },
   phone:{
-    type: Number,
+    type: String,
+    unique: true,
   },
   gender:{
     type: String,

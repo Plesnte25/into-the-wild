@@ -28,8 +28,8 @@ app.use(
 );
 app.use(
   cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    origin: ["https://into-the-wild-static.onrender.com","http://localhost:5174"],
+    // methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     credentials: true,
   })
 );
@@ -42,7 +42,7 @@ app.use(express.json()); //parse json bodies
 const ADMIN_USERNAME = process.env.ADMIN_USER || 'myadmin';
 const ADMIN_PASSWORD = process.env.ADMIN_PASS || 'into_wild_stays';
 
-app.post("/api/login", express.json(), (req, res) => {
+app.post("/api/v1/auth/login", express.json(), (req, res) => {
   const { username, password } = req.body;
 
   if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
