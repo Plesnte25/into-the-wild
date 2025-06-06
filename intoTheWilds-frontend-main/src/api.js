@@ -2,7 +2,13 @@
 import axios from "axios";
 import { BASE_URL } from "./utils/baseurl";
 import { toast } from "react-toastify";
-export const loginUser = async (emailorphone  , password) => {
+
+export const api = axios.create({
+  baseURL: BASE_URL,
+  withCredentials: true,
+});
+
+export const loginUser = async (emailorphone, password) => {
   try {
     const response = await fetch(`${BASE_URL}/auth/login`, {
       method: "POST",
@@ -13,11 +19,11 @@ export const loginUser = async (emailorphone  , password) => {
       const errorData = await response.json();
       throw new Error(errorData.message || "Login failed");
     }
-    if(response.status===204){
+    if (response.status === 204) {
       // console.log(response);
       return response;
     }
-    const data=await response.json();
+    const data = await response.json();
     return data;
   } catch (error) {
     console.error("Error during login:", error);
@@ -30,7 +36,7 @@ export const registerUser = async (name, emailorphone, password) => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, emailorphone, password }),
-    }); 
+    });
     if (!response.ok) {
       const errorData = await response.json();
       toast.error(errorData.error);
@@ -42,16 +48,16 @@ export const registerUser = async (name, emailorphone, password) => {
   }
 };
 
-export const googleSignup=async(response)=>{
-  try{
-    const res=await axios.post(`${BASE_URL}/auth/google-signup`,response);
+export const googleSignup = async (response) => {
+  try {
+    const res = await axios.post(`${BASE_URL}/auth/google-signup`, response);
     // console.log(res);
-    if(res.status===201||res.status===200){
+    if (res.status === 201 || res.status === 200) {
       return res;
     }
-  }catch(err){
+  } catch (err) {
     // console.log(err);
     toast.error(err.response.data.message);
     throw err;
   }
-}
+};
