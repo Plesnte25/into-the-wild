@@ -1,5 +1,5 @@
 const Review = require('../models/Review');
-const User = require('../models/User');
+const User = require('../models/User').default;
 const Tour = require('../models/Properties');
 
 exports.getAllReviews = async (req, res) => {
