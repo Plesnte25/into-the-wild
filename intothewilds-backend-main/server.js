@@ -8,7 +8,7 @@ const userRoutes = require("./routes/userRoutes");
 const propertiesRoutes = require("./routes/propertiesRoutes");
 const morgan = require("morgan");
 const contactRoutes = require("./routes/contactRoutes");
-const cors = require("cors");
+import cors from "cors";
 const propertyListingQueryRoutes = require("./routes/propertyListingQueryRoutes");
 const toursQueryRoutes = require("./routes/toursQueryRoutes");
 const eventQueryRoutes = require("./routes/eventQueryRoutes");
