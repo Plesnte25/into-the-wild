@@ -157,7 +157,7 @@ exports.register = async (req, res) => {
     console.log(error);
     res.status(400).json({ error: error.message });
   }
-};
+}
 
 // Login user
 exports.login = async (req, res) => {
@@ -167,27 +167,30 @@ exports.login = async (req, res) => {
     if (!emailorphone || !password)
       return res.status(400).json({ message: "All fields are required" });
 
-    const condtions = [];
+    const condtions = [
+      { username: emailorphone.toLowerCase() },
+      { email: emailorphone.toLowerCase() },
+    ];
 
     // 1. Phone: all digits
     if (/^\\d{6,15}$/.test(emailorphone)) {
-      condtions.push({ phone: Number(emailorphone) });
+      condtions.push({ phone: emailorphone });
     }
-
-    // 2. email
-    if (emailorphone.includes("@")) {
-      condtions.push({ email: emailorphone.toLowerCase() });
-    }
-
-    // 3. username (fallback)
-    condtions.push({ username: emailorphone.toLowerCase() });
 
     // Find the user
-    const user = await User.findOne({ $or: condtions }).select("+password");
-    if (!user) return res.status(400).json({ message: "User not found" });
+    const user = await findOne({ $or: condtions }).select("+password");
+    if (!user)
+      return res
+        .status(400)
+        .json({ success: false, message: "User not found" });
+    
+    // console.log("Debug-login", user);
 
     const isMatch = await user.comparePassword(password);
-    if (!isMatch) return res.status(400).json({ message: "Invalid Password" });
+    if (!isMatch)
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials" });
 
     // Check if email is verified
     if (!user.isVerified) {
@@ -215,12 +218,12 @@ exports.login = async (req, res) => {
     const token = createJwtToken(user._id);
     const { password: _pw, ...userData } = user.toObject();
 
-    res.status(200).json({ token, user: userData });
+    res.json({ token, user: userData });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Internal Server Error" });
   }
-};
+}
 
 // Verify OTP
 exports.verifyEmail = async (req, res) => {
@@ -231,9 +234,9 @@ exports.verifyEmail = async (req, res) => {
     console.log(emailorphone, otp);
     let user;
     if (emailorphone.includes("@")) {
-      user = await User.findOne({ email: emailorphone });
+      user = await findOne({ email: emailorphone });
     } else {
-      user = await User.findOne({ phone: emailorphone });
+      user = await findOne({ phone: emailorphone });
     }
 
     if (!user) {
@@ -260,7 +263,7 @@ exports.verifyEmail = async (req, res) => {
     user.isVerified = true;
     user.otp = null; // Clear OTP after successful verification
     await user.save();
-    const token = jwt.sign(
+    const token = sign(
       { userId: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
@@ -280,26 +283,26 @@ exports.verifyEmail = async (req, res) => {
     console.log(error);
     res.status(400).json({ error: "Invalid request." });
   }
-};
+}
 
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await find();
     res.status(200).json({ success: true, users });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-};
+}
 
 exports.googleSignup = async (req, res) => {
   try {
     const response = req.body;
     const clientId = response.clientId;
     const clientCredentials = response.credential;
-    const jwtDecode = jwt.decode(clientCredentials);
-    const user = await User.findOne({ email: jwtDecode.email });
+    const jwtDecode = decode(clientCredentials);
+    const user = await findOne({ email: jwtDecode.email });
     if (user) {
-      const token = jwt.sign(
+      const token = sign(
         { userId: user._id, role: user.role },
         process.env.JWT_SECRET,
         { expiresIn: "1h" }
@@ -326,7 +329,7 @@ exports.googleSignup = async (req, res) => {
       avatar: jwtDecode.picture,
     });
     await newUser.save();
-    const token = jwt.sign(
+    const token = sign(
       { userId: newUser._id, role: newUser.role },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
@@ -350,4 +353,4 @@ exports.googleSignup = async (req, res) => {
       message: "Internal server error",
     });
   }
-};
+}

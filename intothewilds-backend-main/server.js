@@ -26,6 +26,7 @@ app.use(
       "Too many requests from this IP, please try again after 15 minutes",
   })
 );
+
 app.use(
   cors({
     origin: ["https://into-the-wild-static.onrender.com","http://localhost:5174"],
@@ -39,8 +40,8 @@ connectToMongo();
 //middlewares
 app.use(express.json()); //parse json bodies
 
-const ADMIN_USERNAME = process.env.ADMIN_USER || 'myadmin';
-const ADMIN_PASSWORD = process.env.ADMIN_PASS || 'into_wild_stays';
+const ADMIN_USERNAME = process.env.ADMIN_USER || "myadmin";
+const ADMIN_PASSWORD = process.env.ADMIN_PASS || "into_wild_stays";
 
 app.post("/api/v1/auth/login", express.json(), (req, res) => {
   const { username, password } = req.body;
@@ -56,7 +57,6 @@ app.post("/api/v1/auth/login", express.json(), (req, res) => {
     res.status(401).send("Invalid Credentials");
   }
 });
-
 
 //routes
 app.get("/", (req, res) => {
