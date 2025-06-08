@@ -29,8 +29,8 @@ app.use(
 
 app.use(
   cors({
-    origin: ["https://into-the-wild-static.onrender.com","http://localhost:5174"],
-    // methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    origin: ["https://into-the-wild-static.onrender.com","http://localhost:5173"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     credentials: true,
   })
 );
