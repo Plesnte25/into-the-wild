@@ -43,7 +43,7 @@ app.use(express.json()); //parse json bodies
 const ADMIN_USERNAME = process.env.ADMIN_USER || "myadmin";
 const ADMIN_PASSWORD = process.env.ADMIN_PASS || "into_wild_stays";
 
-app.post("/api/v1/auth/login", express.json(), (req, res) => {
+app.post("/auth/login", express.json(), (req, res) => {
   const { username, password } = req.body;
 
   if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
