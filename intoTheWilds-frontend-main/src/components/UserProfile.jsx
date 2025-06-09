@@ -204,6 +204,15 @@ const UserProfile = () => {
     fetchBookings();
   }, []);
 
+  const token=localStorage.getItem("token");
+  const gotoAdmin=()=>{
+    navigate("/admin",{replace:true,
+      state: {
+            token,
+            user,
+          }})
+  }
+  
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     console.log("storedUser", storedUser);
@@ -317,6 +326,12 @@ const UserProfile = () => {
           <Edit className="w-5 h-5" />
           <span>Edit Profile</span>
         </button>
+        {
+        user.role==="admin"?(
+        <div className="flex justify-center pt-2">
+        <button className="bg-[#0F2642] text-white" onClick={gotoAdmin}>Admin Pannel</button>
+        </div>):(<div></div>)
+        }
         {/* Bookings Section */}
         <div className="p-6 space-y-4">
           <h2 className="text-xl font-bold text-[#0F2642]">Your Bookings</h2>
