@@ -191,7 +191,7 @@ const InstagramGallery = () => {
           className="flex flex-col md:flex-row items-center p-6 sm:p-10 rounded-t-lg bg-white border-b border-gray-200 shadow-sm"
         >
           {/* Mobile Menu Toggle */}
-          <div className="md:hidden absolute top-4 right-4">
+{/*           <div className="md:hidden absolute top-4 right-4">
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
@@ -200,7 +200,7 @@ const InstagramGallery = () => {
             >
               <Menu size={24} />
             </motion.button>
-          </div>
+          </div> */}
 
           {/* Profile Picture */}
           <div className="mb-4 md:mr-8 md:mb-0 flex justify-center w-full md:w-auto">
