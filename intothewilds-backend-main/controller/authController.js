@@ -1,15 +1,31 @@
-const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
-const User = require('../models/User');
-require('dotenv').config();
+const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+const User = require("../models/User");
+// const SendmailTransport = require("nodemailer/lib/sendmail-transport");
+require("dotenv").config();
 // Nodemailer transporter setup
-const transporter = nodemailer.createTransport({
-  service: 'Gmail', // Change if using another provider
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+// const transporter = nodemailer.createTransport({
+//   service: "Gmail", // Change if using another provider
+//   auth: {
+//     user: process.env.EMAIL_USER,
+//     pass: process.env.EMAIL_PASS,
+//   },
+// });
+
+function buildTransporter() {
+  const { EMAIL_HOST, EMAIL_USER, EMAIL_PASS, EMAIL_PORT } = process.env;
+  if (!EMAIL_HOST || !EMAIL_USER || !EMAIL_PASS || !EMAIL_PORT) {
+    console.warn("SMTP env-vars are missing - login email will be skipped");
+    return null;
+  }
+  return nodemailer.createTransport({
+    host: EMAIL_HOST,
+    port: Number(EMAIL_PORT),
+    secure: Number(EMAIL_PORT) === 465,
+    auth: { user: EMAIL_USER, pass: EMAIL_PASS },
+  });
+}
+const transporter = buildTransporter();
 
 // Generate OTP
 const generateOTP = () => {
@@ -28,16 +44,15 @@ exports.register = async (req, res) => {
     // console.log(req.body);
     // Check if the email already exists
     let existingUser;
-    if(emailorphone.includes("@")){
+    if (emailorphone.includes("@")) {
       existingUser = await User.findOne({ email: emailorphone });
-    }
-    else{
+    } else {
       existingUser = await User.findOne({ phone: emailorphone });
     }
     // console.log(existingUser);
     if (existingUser) {
       if (existingUser.email === emailorphone) {
-        if(!existingUser.isVerified){
+        if (!existingUser.isVerified) {
           const otp = generateOTP();
           existingUser.otp = otp;
           existingUser.otpGeneratedAt = Date.now();
@@ -45,19 +60,22 @@ exports.register = async (req, res) => {
           await transporter.sendMail({
             from: process.env.EMAIL_USER,
             to: emailorphone,
-            subject: 'Verify Your Email Address',
+            subject: "Verify Your Email Address",
             html: `<p>Hello ${name},</p>
                  <p>Thank you for registering. Please verify your email address by entering the otp below:</p>
                  <p><strong>${otp}</strong></p>
                  <p>This otp is valid for 10 mins.</p>`,
           });
-          return res.status(201).json({ message: 'Email is already registered. Please verify your email to log in. OTP sent to your email.' });
+          return res.status(201).json({
+            message:
+              "Email is already registered. Please verify your email to log in. OTP sent to your email.",
+          });
+        } else {
+          return res
+            .status(400)
+            .json({ error: "Email is already registered." });
         }
-        else{
-          return res.status(400).json({ error: 'Email is already registered.' });
-        }
-      }
-      else {
+      } else {
         const otp = generateOTP();
         existingUser.otp = otp;
         existingUser.otpGeneratedAt = Date.now();
@@ -75,13 +93,17 @@ exports.register = async (req, res) => {
         const response = await fetch("https://www.fast2sms.com/dev/bulkV2", {
           method: "POST",
           body: JSON.stringify(fast2smsData),
-          headers: fast2smsHeaders
+          headers: fast2smsHeaders,
         });
         if (response.status === 200) {
-          return res.status(201).json({ message: 'Phone number is already registered. Please verify your phone number to log in. OTP sent to your phone number.' });
-        }
-        else {
-          return res.status(400).json({ error: 'Failed to send OTP to your phone number.' });
+          return res.status(201).json({
+            message:
+              "Phone number is already registered. Please verify your phone number to log in. OTP sent to your phone number.",
+          });
+        } else {
+          return res
+            .status(400)
+            .json({ error: "Failed to send OTP to your phone number." });
         }
       }
     }
@@ -104,17 +126,16 @@ exports.register = async (req, res) => {
       await transporter.sendMail({
         from: process.env.EMAIL_USER,
         to: email,
-        subject: 'Verify Your Email Address',
+        subject: "Verify Your Email Address",
         html: `<p>Hello ${name},</p>
              <p>Thank you for registering. Please verify your email address by entering the otp below:</p>
              <p><strong>${otp}</strong></p>
              <p>This otp is valid for 10 mins.</p>`,
       });
       res.status(201).json({
-        message: 'User registered successfully. Please verify your email.',
+        message: "User registered successfully. Please verify your email.",
       });
-    }
-    else {
+    } else {
       //send sms
       const formatContactNumber = (contactNumber) => {
         if (contactNumber.startsWith("+91")) {
@@ -135,18 +156,16 @@ exports.register = async (req, res) => {
       };
       // console.log("fast2smsData", fast2smsData);
       // console.log("fast2smsHeaders", fast2smsHeaders);
-      const response = await fetch(
-        "https://www.fast2sms.com/dev/bulkV2",
-        {
-          method: "POST",
-          body: JSON.stringify(fast2smsData),
-          headers: fast2smsHeaders
-        }
-      );
+      const response = await fetch("https://www.fast2sms.com/dev/bulkV2", {
+        method: "POST",
+        body: JSON.stringify(fast2smsData),
+        headers: fast2smsHeaders,
+      });
       // console.log("response", response);
       if (response.status === 200) {
         res.status(201).json({
-          message: 'User registered successfully. Please verify your phone number.',
+          message:
+            "User registered successfully. Please verify your phone number.",
         });
       }
     }
@@ -160,76 +179,104 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { emailorphone, password } = req.body;
-    // console.log(req.body);
-    if (!emailorphone || !password) {
-      console.log("All fields are required");
-      return res.status(400).json({ error: "All fields are required" });
+
+    if (!emailorphone || !password)
+      return res.status(400).json({ message: "All fields are required" });
+
+    const condtions = [
+      { username: emailorphone.toLowerCase() },
+      { email: emailorphone.toLowerCase() },
+    ];
+
+    // 1. Phone: all digits
+    if (/^\\d{6,15}$/.test(emailorphone)) {
+      condtions.push({ phone: emailorphone });
     }
+
     // Find the user
-    let user;
-    if(emailorphone.includes("@")){
-      user = await User.findOne({ email: emailorphone });
-    }
-    else{
-      user = await User.findOne({ phone: emailorphone });
-    }
-    if (!user || !(await user.comparePassword(password))) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-    console.log(user);
+    const user = await User.findOne({ $or: condtions }).select("+password");
+
+    if (!user)
+      return res
+        .status(401)
+        .json({ success: false, message: "User not found" });
+
+    // console.log("Debug-login", user);
+
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch)
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials" });
+
     // Check if email is verified
-    if (!user.isVerified) {
-      const otp = generateOTP();
-      user.otp = otp;
-      user.otpGeneratedAt = Date.now();
-      await user.save();
-      if (user.email) {
-        await transporter.sendMail({
-          from: process.env.EMAIL_USER,
+    // if (!user.isVerified) {
+    //   const otp = generateOTP();
+    //   user.otp = otp;
+    //   user.otpGeneratedAt = Date.now();
+    //   // await user.save();
+    //   // if (user.email) {
+    //   //   await transporter.sendMail({
+    //   //     from: process.env.EMAIL_USER,
+    //   //     to: user.email,
+    //   //     subject: "Verify Your Email Address",
+    //   //     html: `<p>Hello ${user.name},</p>
+    //   //          <p>Thank you for registering. Please verify your email address by entering the otp below:</p>
+    //   //          <p><strong>${otp}</strong></p>
+    //   //          <p>This otp is valid for 10 mins.</p>`,
+    //   //   });
+    //   // }
+    //   return res.status(204).json({
+    //     message: "Please verify your email to log in. OTP sent to your email.",
+    //   });
+    // }
+    if (transporter) {
+      transporter
+        .sendMail({
+          from: `"IntoTheWild" <${process.env.EMAIL_USER}>`,
           to: user.email,
-          subject: 'Verify Your Email Address',
-          html: `<p>Hello ${user.name},</p>
-               <p>Thank you for registering. Please verify your email address by entering the otp below:</p>
-               <p><strong>${otp}</strong></p>
-               <p>This otp is valid for 10 mins.</p>`,
+          subject: "New Login",
+          html: "<p>You just signed in!</p>",
+        })
+        .catch((err) => {
+          console.log("sendMail failed - login continues", err.message);
         });
-      }
-      return res.status(204).json({ message: 'Please verify your email to log in. OTP sent to your email.' });
     }
 
     // Generate JWT for login
-    const token = jwt.sign(
-      { userId: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
-    );
-    console.log("jwt");
-    const { _id, name, email: userEmail, phone, role } = user;
-    res.json({ token, user: { _id, name, userEmail, phone, role } });
-  } catch (error) {
-    console.log(error);
-    res.status(400).json({ error: error.message });
+    // const token = createJwtToken(user._id);
+    // const { password: _pw, ...userData } = user.toObject();
+
+    // res.json({ token, user: userData });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+    res.json({
+      token,
+      user: { id: user._id, username: user.username, role: user.role },
+    });
+  } catch (err) {
+    console.error("Login error - ", err);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
 
 // Verify OTP
 exports.verifyEmail = async (req, res) => {
   try {
-    const { emailorphone, otp } = req.body;  // OTP should be sent in the request body along with email
+    const { emailorphone, otp } = req.body; // OTP should be sent in the request body along with email
 
     // Find the user by email
     console.log(emailorphone, otp);
     let user;
-    if(emailorphone.includes("@")){
-      user = await User.findOne({ email: emailorphone });
-    }
-    else{
-      user = await User.findOne({ phone: emailorphone });
+    if (emailorphone.includes("@")) {
+      user = await findOne({ email: emailorphone });
+    } else {
+      user = await findOne({ phone: emailorphone });
     }
 
     if (!user) {
-      return res.status(404).json({ error: 'User not found.' });
+      return res.status(404).json({ error: "User not found." });
     }
 
     // Check if the OTP matches and is still valid (e.g., within 10 minutes)
@@ -238,23 +285,27 @@ exports.verifyEmail = async (req, res) => {
       console.log(user.otp, otp);
       console.log("Invalid OTP");
 
-      return res.status(400).json({ error: 'Invalid OTP.' });
+      return res.status(400).json({ error: "Invalid OTP." });
     }
 
     // Optionally, you can also check for OTP expiration here (e.g., if stored with an expiration time)
     // Here, we're assuming OTP is valid for 10 minutes
     const otpExpirationTime = 10 * 60 * 1000; // 10 minutes in milliseconds
     if (Date.now() - user.otpGeneratedAt > otpExpirationTime) {
-      return res.status(400).json({ error: 'OTP has expired.' });
+      return res.status(400).json({ error: "OTP has expired." });
     }
 
     // Update the user to set isVerified to true
     user.isVerified = true;
     user.otp = null; // Clear OTP after successful verification
     await user.save();
-    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = sign(
+      { userId: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
     res.status(200).json({
-      message: 'Email verified successfully.',
+      message: "Email verified successfully.",
       token,
       user: {
         _id: user._id,
@@ -266,29 +317,32 @@ exports.verifyEmail = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(400).json({ error: 'Invalid request.' });
+    res.status(400).json({ error: "Invalid request." });
   }
 };
 
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await find();
     res.status(200).json({ success: true, users });
-  }
-  catch (err) {
+  } catch (err) {
     res.status(500).json({ error: err.message });
   }
-}
+};
 
 exports.googleSignup = async (req, res) => {
   try {
     const response = req.body;
     const clientId = response.clientId;
     const clientCredentials = response.credential;
-    const jwtDecode = jwt.decode(clientCredentials);
-    const user = await User.findOne({ email: jwtDecode.email });
+    const jwtDecode = decode(clientCredentials);
+    const user = await findOne({ email: jwtDecode.email });
     if (user) {
-      const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      const token = sign(
+        { userId: user._id, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
       return res.status(200).json({
         success: true,
         token,
@@ -300,7 +354,7 @@ exports.googleSignup = async (req, res) => {
           avatar: user.avatar,
           role: user.role,
         },
-        message: "Signed in successfully"
+        message: "Signed in successfully",
       });
     }
     const newUser = new User({
@@ -311,7 +365,11 @@ exports.googleSignup = async (req, res) => {
       avatar: jwtDecode.picture,
     });
     await newUser.save();
-    const token = jwt.sign({ userId: newUser._id, role: newUser.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = sign(
+      { userId: newUser._id, role: newUser.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
     res.status(201).json({
       success: true,
       token,
@@ -323,14 +381,12 @@ exports.googleSignup = async (req, res) => {
         avatar: newUser.avatar,
         role: newUser.role,
       },
-      message: "Signed up successfully"
+      message: "Signed up successfully",
     });
-  }
-  catch (err) {
+  } catch (err) {
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: "Internal server error",
     });
   }
-}
-
+};

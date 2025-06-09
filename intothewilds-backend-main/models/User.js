@@ -7,11 +7,19 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+  },
   email: {
     type: String,
   },
   password: {
     type: String,
+    required: true,
+    select: false,
   },
   clientId: {
     type: String,
@@ -21,7 +29,8 @@ const userSchema = new mongoose.Schema({
     default: "https://www.gravatar.com/avatar/"
   },
   phone:{
-    type: Number,
+    type: String,
+    unique: true,
   },
   gender:{
     type: String,
@@ -50,13 +59,13 @@ const userSchema = new mongoose.Schema({
 // Hash password before saving the user
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
-  this.password = await bcrypt.hash(this.password, 10);
+  this.password = await hash(this.password, 10);
   next();
 });
 
 // Compare input password with hashed password
 userSchema.methods.comparePassword = function (password) {
-  return bcrypt.compare(password, this.password);
+  return bcrypt.compareSync(password, this.password);
 };
 
 module.exports = mongoose.model("User", userSchema);
