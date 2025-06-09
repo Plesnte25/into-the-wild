@@ -251,6 +251,8 @@ exports.getExploreBookings=async(req,res)=>{
 exports.getuserbookings=async(req,res)=>{
   try{
     const {userId}=req.user;
+    console.log("qefed");
+    console.log(userId);
     const bookings=await Booking.find({user:userId}).populate('property');
     // console.log(bookings);
     return res.status(200).json({success:true,bookings});

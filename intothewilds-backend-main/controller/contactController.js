@@ -15,6 +15,7 @@ exports.contactController = async (req, res) => {
         const { name, email, phone, message } = req.body;
         const contact = new Contact({ name, email, phone, message });
         await contact.save();
+        console.log("data saved successfully");
 
         // Send confirmation email
         await transporter.sendMail({

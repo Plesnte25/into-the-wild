@@ -176,7 +176,7 @@ exports.login = async (req, res) => {
     if (!user || !(await user.comparePassword(password))) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-
+    console.log(user);
     // Check if email is verified
     if (!user.isVerified) {
       const otp = generateOTP();
@@ -203,6 +203,7 @@ exports.login = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
+    console.log("jwt");
     const { _id, name, email: userEmail, phone, role } = user;
     res.json({ token, user: { _id, name, userEmail, phone, role } });
   } catch (error) {
