@@ -185,6 +185,8 @@ const UserProfile = () => {
   const localUser = localStorage.getItem("user") || "{}";
   const [bookings, setBookings] = useState([]);
   // Check for user authentication
+  console.log("qedqed");
+  console.log(localUser);
   useEffect(() => {
     const fetchBookings = async () => {
       try {
