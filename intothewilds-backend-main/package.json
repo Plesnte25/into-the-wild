@@ -5,7 +5,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "seed:admin": "node scripts/seedAdmin.js",
+    "build": "npm run seed:admin"
   },
   "author": "",
   "license": "ISC",

@@ -27,13 +27,13 @@ exports.createBooking = async (req, res) => {
      let roomBooked=0;
      let totalguest=0;
     if(property) {
-      const propertyDetails = await Property.findById(property);
+      const propertyDetails = await _findById(property);
       // console.log(propertyDetails);
       if(!propertyDetails) return res.status(400).json({error: "Property not found"});
       
       totalguest = Number(adults) + Number(children);
       roomBooked = Math.ceil(totalguest / propertyDetails.guestCapacity);
-      const existingBookings = await Booking.find({
+      const existingBookings = await find({
         property: property,
         status: 'confirmed',
         $or: [
@@ -90,7 +90,7 @@ exports.createBooking = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}
 
 // Verify payment and update booking status
 exports.verifyPayment = async (req, res) => {
@@ -112,7 +112,7 @@ exports.verifyPayment = async (req, res) => {
     //   );
 
     //   if (!booking) return res.status(404).json({ error: 'Booking not found.' });
-      const booking = await Booking.findById(bookingId)
+      const booking = await findById(bookingId)
         .populate('user')
         .populate('property');
       
@@ -163,50 +163,50 @@ exports.verifyPayment = async (req, res) => {
     }catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}
 
 // View all bookings
 exports.getBookings = async (req, res) => {
   try {
-    const bookings = await Booking.find().populate('user property');
+    const bookings = await find().populate('user property');
     res.status(200).json(bookings);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}
 
 // Update booking status
-exports.updateBookingStatus = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { status } = req.body;
+// export async function updateBookingStatus(req, res) {
+//   try {
+//     const { id } = req.params;
+//     const { status } = req.body;
 
-    const booking = await Booking.findByIdAndUpdate(id, { status }, { new: true });
-    if (!booking) return res.status(404).json({ error: 'Booking not found.' });
+//     const booking = await findByIdAndUpdate(id, { status }, { new: true });
+//     if (!booking) return res.status(404).json({ error: 'Booking not found.' });
 
-    res.status(200).json({ message: 'Booking updated successfully!', booking });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+//     res.status(200).json({ message: 'Booking updated successfully!', booking });
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// }
 
 // Cancel booking
 exports.cancelBooking = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const booking = await Booking.findByIdAndDelete(id);
+    const booking = await findByIdAndDelete(id);
     if (!booking) return res.status(404).json({ error: 'Booking not found.' });
 
     res.status(200).json({ message: 'Booking cancelled successfully!' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}
 
 exports.getAllBookings=async(req,res)=>{
   try{
-    const bookings=await Booking.find().populate('user').populate('property');
+    const bookings=await find().populate('user').populate('property');
     res.status(200).json({success:true,bookings});
   }
   catch(err){
@@ -218,7 +218,7 @@ exports.updateBookingStatus=async(req,res)=>{
   try{
     const {id}=req.params;
     if(!id) return res.status(400).json({error:"Booking ID is required"});
-    const booking=await Booking.findByIdAndUpdate(id,{$set:{status:req.body.status}},{new:true});
+    const booking=await findByIdAndUpdate(id,{$set:{status:req.body.status}},{new:true});
     res.status(200).json({message:"Booking status updated successfully",booking});
   }
   catch(err){
@@ -229,7 +229,7 @@ exports.updateBookingStatus=async(req,res)=>{
 exports.getBookingByUserId=async(req,res)=>{
   try{
     const {id}=req.params;
-    const bookings=await Booking.find({user:id});
+    const bookings=await find({user:id});
     res.status(200).json({success:true,bookings});
   }
   catch(err){
@@ -240,7 +240,7 @@ exports.getBookingByUserId=async(req,res)=>{
 exports.getExploreBookings=async(req,res)=>{
   try{
     const {location,checkInDate,checkOutDate,adults,children}=req.body;
-    const properties=await Property.find({location});
+    const properties=await _find({location});
     res.status(200).json({success:true,properties});
   }
   catch(err){
@@ -251,9 +251,7 @@ exports.getExploreBookings=async(req,res)=>{
 exports.getuserbookings=async(req,res)=>{
   try{
     const {userId}=req.user;
-    console.log("qefed");
-    console.log(userId);
-    const bookings=await Booking.find({user:userId}).populate('property');
+    const bookings=await find({user:userId}).populate('property');
     // console.log(bookings);
     return res.status(200).json({success:true,bookings});
   }
