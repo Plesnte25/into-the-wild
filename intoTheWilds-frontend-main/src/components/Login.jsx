@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"; // Import useEffect
 import { useNavigate, Link } from "react-router-dom";
 import { AtSign, Lock, Loader2, Eye, EyeOff } from "lucide-react";
-import { loginUser, googleSignup } from "../api"; // Ensure googleSignup is imported
+import { api, loginUser, googleSignup } from "../api"; // Ensure googleSignup is imported
 import axios from "axios";
 import { Key } from "lucide-react";
 import { toast } from "react-toastify";
@@ -19,31 +19,37 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const navigate = useNavigate();
+  // const [form, setForm] = useState({ emailorphone:"",password:"" });
+
+  // const handleChange = (e) =>
+  //   setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setIsLoading(true);
-
     try {
-      const data = await loginUser(emailorphone, passwordValue);
-      if (data.status === 204) {
-        setIsModalOpen(true);
+      setIsLoading(true);
+      const { data } = await api.post(
+        "/auth/login",
+        { emailorphone, password: passwordValue },
+        { withCredentials: true }
+      );
+
+      // persist session (optional)
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      // role‑based redirect
+      const role = data?.user?.role?.toLowerCase();
+      if (role === "admin") {
+        navigate("/admin", { replace: true });
       } else {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        // Show success dialog
-        setIsLoading(false);
-        setShowSuccessDialog(true);
-        // Automatically navigate to booking page after 2 seconds
-        setTimeout(() => {
-          setShowSuccessDialog(false);
-          navigate("/", { state: { user: data.user } });
-        }, 2000);
+        navigate("/", { replace: true });
       }
     } catch (err) {
+      const msg = err.response?.data?.message || "Login failed";
+      toast.error(msg);
+    } finally {
       setIsLoading(false);
-      setError("Login failed. Please check your credentials.");
     }
   };
 
@@ -129,7 +135,11 @@ const Login = () => {
                 disabled:opacity-50 disabled:text-gray-500
                 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500
                 transition duration-300 ease-in-out"
-                style={{ caretColor: "#059669", textAlign: "left", lineHeight: "1.5" }}
+                style={{
+                  caretColor: "#059669",
+                  textAlign: "left",
+                  lineHeight: "1.5",
+                }}
               />
             </div>
             <div className="relative">
@@ -148,7 +158,11 @@ const Login = () => {
                 disabled:opacity-50 disabled:text-gray-500
                 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500
                 transition duration-300 ease-in-out"
-                style={{ caretColor: "#059669", textAlign: "left", lineHeight: "1.5" }}
+                style={{
+                  caretColor: "#059669",
+                  textAlign: "left",
+                  lineHeight: "1.5",
+                }}
               />
               <div
                 className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
@@ -255,7 +269,11 @@ const Login = () => {
                 text-gray-900 placeholder-gray-500 font-medium
                 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500
                 transition duration-300 ease-in-out"
-                style={{ caretColor: "#059669", textAlign: "left", lineHeight: "1.5" }}
+                style={{
+                  caretColor: "#059669",
+                  textAlign: "left",
+                  lineHeight: "1.5",
+                }}
               />
             </div>
             <div className="flex justify-between">
