@@ -179,57 +179,28 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { emailorphone, password } = req.body;
-
+    console.log(emailorphone,password);
     if (!emailorphone || !password)
       return res.status(400).json({ message: "All fields are required" });
 
-    const condtions = [
+    const conditions = [
       { username: emailorphone.toLowerCase() },
       { email: emailorphone.toLowerCase() },
     ];
 
-    // 1. Phone: all digits
-    if (/^\\d{6,15}$/.test(emailorphone)) {
-      condtions.push({ phone: emailorphone });
+    if (/^\d{6,15}$/.test(emailorphone)) {
+      conditions.push({ phone: emailorphone });
     }
 
-    // Find the user
-    const user = await User.findOne({ $or: condtions }).select("+password");
+    const user = await User.findOne({ $or: conditions }).select("+password");
 
     if (!user)
-      return res
-        .status(401)
-        .json({ success: false, message: "User not found" });
-
-    // console.log("Debug-login", user);
+      return res.status(401).json({ success: false, message: "User not found" });
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch)
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid credentials" });
+      return res.status(401).json({ success: false, message: "Invalid credentials" });
 
-    // Check if email is verified
-    // if (!user.isVerified) {
-    //   const otp = generateOTP();
-    //   user.otp = otp;
-    //   user.otpGeneratedAt = Date.now();
-    //   // await user.save();
-    //   // if (user.email) {
-    //   //   await transporter.sendMail({
-    //   //     from: process.env.EMAIL_USER,
-    //   //     to: user.email,
-    //   //     subject: "Verify Your Email Address",
-    //   //     html: `<p>Hello ${user.name},</p>
-    //   //          <p>Thank you for registering. Please verify your email address by entering the otp below:</p>
-    //   //          <p><strong>${otp}</strong></p>
-    //   //          <p>This otp is valid for 10 mins.</p>`,
-    //   //   });
-    //   // }
-    //   return res.status(204).json({
-    //     message: "Please verify your email to log in. OTP sent to your email.",
-    //   });
-    // }
     if (transporter) {
       transporter
         .sendMail({
@@ -243,14 +214,10 @@ exports.login = async (req, res) => {
         });
     }
 
-    // Generate JWT for login
-    // const token = createJwtToken(user._id);
-    // const { password: _pw, ...userData } = user.toObject();
-
-    // res.json({ token, user: userData });
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
+
     res.json({
       token,
       user: { id: user._id, username: user.username, role: user.role },
