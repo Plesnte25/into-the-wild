@@ -29,7 +29,12 @@ app.use(
 
 app.use(
   cors({
-    origin: ["https://into-the-wild-static.onrender.com","http://localhost:5173"],
+    origin: [
+      "https://into-the-wild-static.onrender.com",
+      "http://localhost:5173",
+      "https://intothewildstays.in",
+      "https://www.intothewildstays.in",
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     credentials: true,
   })
