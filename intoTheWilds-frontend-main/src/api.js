@@ -68,7 +68,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 // Use environment variables for base URL
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://into-the-wild-2gp2.onrender.com/api/v1"
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://into-the-wild-2gp2.onrender.com/api/v1";
 
 export const api = axios.create({
   baseURL: BASE_URL,
