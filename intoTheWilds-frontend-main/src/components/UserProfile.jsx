@@ -185,6 +185,8 @@ const UserProfile = () => {
   const localUser = localStorage.getItem("user") || "{}";
   const [bookings, setBookings] = useState([]);
   // Check for user authentication
+  console.log("qedqed");
+  console.log(localUser);
   useEffect(() => {
     const fetchBookings = async () => {
       try {
@@ -202,6 +204,14 @@ const UserProfile = () => {
     fetchBookings();
   }, []);
 
+  const token=localStorage.getItem("token");
+  const gotoAdmin=()=>{
+    navigate("/admin",{replace:true,
+      state: {
+            token,
+            user,
+  }})}
+  
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     console.log("storedUser", storedUser);
@@ -242,7 +252,9 @@ const UserProfile = () => {
   };
 
   return (
-    <div className="flex items-center justify-center p-4 lg:pt-28 bg-[url('https://iili.io/2tGzdep.jpg')] bg-no-repeat bg-center bg-cover">
+    <>
+    <div className="bg-[url('https://iili.io/2tGzdep.jpg')] bg-no-repeat bg-center bg-cover">
+    <div className="flex items-center w-full justify-center p-4 lg:pt-28 bg-no-repeat bg-center bg-cover">
       <div className="w-full max-w-md mx-auto">
         <div className="bg-white shadow-xl rounded-xl overflow-hidden border border-[#0F2642]/10">
           {/* Navigation Header */}
@@ -315,61 +327,16 @@ const UserProfile = () => {
           <Edit className="w-5 h-5" />
           <span>Edit Profile</span>
         </button>
+        {
+        user.role==="admin"?(
+        <div className="flex justify-center pt-2">
+        <button className="bg-[#0F2642] text-white" onClick={gotoAdmin}>Admin Pannel</button>
+        </div>):(<div></div>)
+        }
         {/* Bookings Section */}
-        <div className="p-6 space-y-4">
-          <h2 className="text-xl font-bold text-[#0F2642]">Your Bookings</h2>
-          {bookings.length <= 0 && (
-            <div className="text-center text-lg font-semibold text-[#0F2642] mt-4">
-              No bookings
-            </div>
-          )}
-          {bookings.length > 0 && (
-            <div className="overflow-x-auto md:overflow-x-scroll">
-              <table className="min-w-full bg-white border border-gray-300">
-                <thead>
-                  <tr className="bg-[#0F2642] text-white">
-                    <th className="py-2 px-4 border">Property Name</th>
-                    <th className="py-2 px-4 border">Check-in Date</th>
-                    <th className="py-2 px-4 border">Check-out Date</th>
-                    <th className="py-2 px-4 border">Payment Status</th>
-                    <th className="py-2 px-4 border">Rooms Booked</th>
-                    <th className="py-2 px-4 border">Amount Paid</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {bookings?.map((booking) => (
-                    <tr key={booking?._id} className="hover:bg-gray-100">
-                      <td className="py-2 px-4 border">
-                        {booking?.property.name}
-                      </td>
-                      <td className="py-2 px-4 border">
-                        {new Date(booking?.checkInDate).toLocaleDateString()}
-                      </td>
-                      <td className="py-2 px-4 border">
-                        {new Date(booking?.checkOutDate).toLocaleDateString()}
-                      </td>
-                      <td
-                        className={`py-2 px-4 border ${booking?.status === "confirmed"
-                          ? "text-green-950"
-                          : "text-yellow-950"
-                          }`}
-                      >
-                        {booking?.status === "confirmed"
-                          ? "Confirmed"
-                          : "Pending"}
-                      </td>
-                      <td className="py-2 px-4 border">
-                        {booking?.roomBooked}
-                      </td>
-                      <td className="py-2 px-4 border">{booking?.amount}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      </div>
+
+</div>
+
 
       {/* Edit Profile Modal */}
       <EditProfileModal
@@ -379,6 +346,58 @@ const UserProfile = () => {
         onSave={handleProfileUpdate}
       />
     </div>
+  <div className="p-6 space-y-4 w-full text-center cursor-default">
+  <h2 className="text-xl md:text-2xl font-bold text-[#0F2642]">Your Bookings</h2>
+
+  {bookings.length === 0 ? (
+    <div className="text-center text-lg font-semibold text-[#0F2642] mt-4">
+      No bookings
+    </div>
+  ) : (
+    <div className="w-full max-w-6xl overflow-x-auto max-h-[500px] overflow-y-auto border border-gray-300 rounded-lg shadow mx-auto">
+
+      <table className="w-full bg-white text-sm md:text-base table-auto">
+
+        <thead className="sticky top-0 bg-[#0F2642] text-white z-10">
+          <tr className="text-left">
+            <th className="py-3 px-4 border whitespace-nowrap">Property Name</th>
+            <th className="py-3 px-4 border whitespace-nowrap">Check-in Date</th>
+            <th className="py-3 px-4 border whitespace-nowrap">Check-out Date</th>
+            <th className="py-3 px-4 border whitespace-nowrap">Payment Status</th>
+            <th className="py-3 px-4 border whitespace-nowrap">Rooms Booked</th>
+            <th className="py-3 px-4 border whitespace-nowrap">Amount Paid</th>
+          </tr>
+        </thead>
+        <tbody>
+          {bookings.map((booking) => (
+            <tr key={booking?._id} className="hover:bg-gray-100">
+              <td className="py-2 px-4 border">{booking?.property?.name}</td>
+              <td className="py-2 px-4 border">
+                {new Date(booking?.checkInDate).toLocaleDateString()}
+              </td>
+              <td className="py-2 px-4 border">
+                {new Date(booking?.checkOutDate).toLocaleDateString()}
+              </td>
+              <td
+                className={`py-2 px-4 border font-semibold ${
+                  booking?.status === "confirmed"
+                    ? "text-green-700"
+                    : "text-yellow-700"
+                }`}
+              >
+                {booking?.status === "confirmed" ? "Confirmed" : "Pending"}
+              </td>
+              <td className="py-2 px-4 border">{booking?.roomBooked}</td>
+              <td className="py-2 px-4 border">₹{booking?.amount}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+</div>
+</div>
+</>
   );
 };
 

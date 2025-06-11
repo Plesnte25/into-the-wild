@@ -46,6 +46,7 @@ const ExploreMoreITW = () => {
   const [loading, setLoading] = useState(true);
   const [activeButton, setActiveButton] = useState(null);
   const [selectedCheckInDate, setSelectedCheckInDate] = useState(new Date());
+  const [reviews,setreviews]=useState();
   const [selectedCheckOutDate, setSelectedCheckOutDate] = useState(
     new Date(new Date().setDate(new Date().getDate() + 1))
   );
@@ -88,255 +89,6 @@ const ExploreMoreITW = () => {
     ],
   };
 
-  const reviews = {
-    IntoTheWildsStays: [
-      {
-        id: 1,
-        name: "Manjula Singh",
-        date: "2 days ago",
-        avatar:
-          "https://lh3.googleusercontent.com/a-/ALV-UjUUygNmvjTkufn8yf6am1WuEmi0ovqTcXdeiejFFYZthSbZbzn84Q=w54-h54-p-rp-mo-ba2-br100",
-        feedback: `"My stay here was nothing short of magical! The place we stayed at was surrounded by breathtaking mountains, offering serene views that made the experience unforgettable. One of the highlights was witnessing a spectacular sunrise, which felt like nature's masterpiece.
-    The hospitality provided by the owner Akash was truly exceptional – he was so warm, accommodating, and attentive that it felt like home. He went above and beyond to ensure our comfort and made our stay even more special."`,
-        type: "feedback",
-        rating: 5,
-      },
-      {
-        id: 3,
-        avatar: image2,
-        type: "image",
-      },
-
-      {
-        id: 2,
-        name: "Tushar Bhagwane",
-        date: "4 days ago",
-        avatar:
-          "https://lh3.googleusercontent.com/a-/ALV-UjWx0zD4XwMxOPsGqweH7fI_8W4dvCaHP_tswI4G0yQCJXYkoD-F=w54-h54-p-rp-mo-br100",
-        feedback: `"I had a fantastic stay at this hotel! The rooms were spacious, clean, and well-equipped with everything I needed for a comfortable visit. The staff were incredibly friendly and went above and beyond to ensure I had a great experience. The location is perfect, with easy access to popular attractions, restaurants, and transportation. The breakfast was delicious with a wide variety of options. I would definitely recommend this hotel to anyone looking for a relaxing and enjoyable stay.stay even more special."`,
-        rating: 5,
-        type: "feedback",
-      },
-      {
-        id: 3,
-        avatar: image1,
-        type: "image",
-      },
-    ],
-    "ITW:TapovanRiseCottages": [
-      {
-        id: 1,
-        name: "Shweta Jha",
-        date: "3 weeks ago",
-        avatar:
-          "https://lh3.googleusercontent.com/a-/ALV-UjVJMTqVydZnsZ3-wUaW1eJzC1kDLaOQDMZ75zAe9x-0KWGSU7iW=w36-h36-p-rp-mo-br100",
-        feedback: `"Great location, beautiful surrounding atmosphere, great staff. Lovely  and great first impression of this cottage . Everything about the hotel was exceptional. It was clean, stylish, roomy with excellent service….. Food was good and great value for money and service was attentive and efficient. Room itself was well equipped and comfortable. I was very pleased with my stay. I hope to be back for a longer visit soon…
-
-Thanks  a lot deepak ji for everything.🙏🏻😊❤️
-
-.would like to recommend this to many of my friends and relatives…."`,
-        rating: 5,
-        type: "feedback",
-      },
-      {
-        id: 3,
-        avatar: image3,
-        type: "image",
-      },
-      {
-        id: 2,
-        name: "Hritu Sharma",
-        date: "a month ago",
-        avatar:
-          "https://lh3.googleusercontent.com/a-/ALV-UjWxIduVycbNc0Sq02qHQmsMcAoU0-6AU4BMYuGBJttWA8lZI1Nr8g=w36-h36-p-rp-mo-br100",
-        feedback: `"Best & Budget friendly place to stay in Rishikesh with the feel of camping, bone fire, music and all other activities.
-
-Walk-in from main road and very safe place. Owner and all staff's behaviour is so nice and humble.
-
-Rooms and open area is well cleaned and very peaceful place and mountain view."`,
-        rating: 5,
-        type: "feedback",
-      },
-      {
-        id: 3,
-        avatar: image4,
-        type: "image",
-      },
-    ],
-    "ITW:MastanaMusafir": [
-      {
-        id: 1,
-        name: "Aadi Raina",
-        date: "a monthb ago",
-        avatar:
-          "https://lh3.googleusercontent.com/a-/ALV-UjVA_eucprNOoafs8A8sEhBaVQ4uKLAtZ1wV2PPlAjIu0N1qmt3u=w36-h36-p-rp-mo-br100",
-        feedback: `"i had a fantastic stay! the staff were incredibly friendly.  Everything about the place was exceptional. It was clean, stylish, roomy with excellent service. Food was good and great value for money and service was attentive and efficient. Room itself was well equipped and comfortable. Highly recommended. ❤️"`,
-        rating: 5,
-        type: "feedback",
-      },
-      {
-        id: 3,
-        avatar: image5,
-        type: "image",
-      },
-      {
-        id: 2,
-        name: "Olivier Guillard",
-        date: "3 month ago",
-        avatar:
-          "https://lh3.googleusercontent.com/a-/ALV-UjUMCa3moxmQtqs4d0MBExw6HcX1gcr-upY6GwSMX9PGAFAd1V5Mxw=w36-h36-p-rp-mo-ba5-br100",
-        feedback: `"This was one of the best paneer butter masala I've ever had, I strongly recommend. I also ordered fried vegetables, papad and parathas. Even though I don't usually write reviews, I just had to share my wonderful experience."`,
-        rating: 5,
-        type: "feedback",
-      },
-      {
-        id: 3,
-        avatar: image6,
-        type: "image",
-      },
-    ],
-    "ITW:PineTales": [
-      {
-        id: 1,
-        name: "manish rathore",
-        date: "a monthb ago",
-        avatar:
-          "https://lh3.googleusercontent.com/a-/ALV-UjWAyMr0qVH4_8n21vsJraxjHqz_wEyldxnY2MHklO0JqjjGCfsw=w54-h54-p-rp-mo-br100",
-        feedback: `"My stay with Pine and Tail Property was an incredible experience! The property was nestled in a beautiful location, surrounded by stunning views that brought a sense of peace and relaxation. Watching the sunrise from the property was absolutely breathtaking—like something out of a dream.
-
-The team at Pine and Tail Property provided outstanding hospitality. "`,
-        rating: 5,
-        type: "feedback",
-      },
-      {
-        id: 3,
-        avatar: image7,
-        type: "image",
-      },
-      {
-        id: 2,
-        name: "Bunny",
-        date: "3 month ago",
-        avatar:
-          "https://lh3.googleusercontent.com/a-/ALV-UjWzekqZQVqqrnzbLdop2eXfnUb--K_2y_SUmtDzIs9lpP4yIppH=w54-h54-p-rp-mo-ba4-br100",
-        feedback: `"Staying with Pine and Tail Property was an unforgettable experience! The property was surrounded by stunning natural beauty, with peaceful views that made every moment feel special. One of the most memorable parts was watching the sunrise—it was truly a breathtaking sight that I’ll never forget.
-
-The hospitality from the Pine and Tail Property team was beyond amazing. "`,
-        rating: 5,
-        type: "feedback",
-      },
-      {
-        id: 3,
-        avatar: image9,
-        type: "image",
-      },
-    ],
-    "ITW:SunandSandVilla": [
-      {
-        id: 1,
-        name: "Rajat Sharma",
-        date: "a monthb ago",
-        avatar:
-          "https://lh3.googleusercontent.com/a-/ALV-UjWfhfXkPNVUNWGSMayOR9RqYcyoEH8iKKWKAtHxLbqAzpNDbJ85Ow=w54-h54-p-rp-mo-ba2-br100",
-        feedback: `"My stay with Sun and Sand Property was absolutely unforgettable! The property was perfectly located, offering stunning views of the beach and the soothing sound of waves in the background. Waking up to a breathtaking sunrise over the water was a highlight of the trip—it felt like a scene from a dream.
-
-The hospitality from the Sun and Sand Property team was exceptional. "`,
-        rating: 5,
-        type: "feedback",
-      },
-
-      {
-        id: 2,
-        name: "Arvind Nagar",
-        date: "3 month ago",
-        avatar:
-          "https://lh3.googleusercontent.com/a-/ALV-UjXcVgO6RVm6QTkIEvCG4fDM4693d-jm2kS5Eji3CbgzhzcTVZLy=w54-h54-p-rp-mo-ba2-br100",
-        feedback: `"Staying with Sun and Sand Property was an incredible experience! The property was right by the beach, offering stunning ocean views and a peaceful, relaxing atmosphere. Watching the sunrise over the water was truly magical—a moment I’ll cherish forever.
-
-The team at Sun and Sand Property provided outstanding hospitality. "`,
-        rating: 5,
-        type: "feedback",
-      },
-
-      {
-        id: 2,
-        name: "Vaibhav Shinde",
-        date: "3 month ago",
-        avatar:
-          "https://lh3.googleusercontent.com/a-/ALV-UjXcQTkIEvCG4fDM4693d-jm2kS5Eji3CbgzhzcTVZLy=w54-h54-p-rp-mo-ba2-br100",
-        feedback: `"My experience with Sun and sand villa was absolutely amazing! The property was surrounded by lush greenery and towering trees, offering a peaceful retreat in nature. The views were spectacular, and waking up to the sounds of the forest felt like pure bliss.
-
-The hospitality from the PinesAndTails team was truly exceptional. "`,
-        rating: 5,
-        type: "feedback",
-      },
-    ],
-    "ITW:TheRudramAuraStay": [
-      {
-        id: 1,
-        name: "Akshad Ghate",
-        date: "a monthb ago",
-        avatar:
-          "https://lh3.googleusercontent.com/a-/ALV-UjUiPYj94ra9LMSK_zdaPBiWGKgJ4tiRClMczHtXnkUHZZ8KlkDt=w54-h54-p-rp-mo-br100",
-        feedback: `"The Rudram Property in Rishikesh has received positive reviews from guests. The property is praised for its cleanliness and hygiene standards, with guests noting that not even a single dust particle was present. The staff is courteous and welcoming, and the food served is fresh and healthy. The property offers yoga classes and Ayurvedic treatments, which guests have found to be relaxing and rejuvenating. However, some guests have faced issues with power fluctuations and the geyser not working well. "`,
-        rating: 5,
-        type: "feedback",
-      },
-      {
-        id: 3,
-        avatar: image12,
-        type: "image",
-      },
-      {
-        id: 2,
-        name: "Vishal Mishra",
-        date: "3 month ago",
-        avatar:
-          "https://lh3.googleusercontent.com/a-/ALV-UjVtHJlom4jAmFJh851wQLMKq_OWJHGUSw7S8qRq9SLF_pPd5oq2=w54-h54-p-rp-mo-br100",
-        feedback: `"This place is very peaceful, it’s simple and peaceful. The food served is very fresh. The staff is also very good and helpful. We have tried shirodhara & abhyang over here. It’s good have stayed at this place 3 and our experience was same. Rooms and bathrooms are clean as well. Parents have also liked this place for stay it’s simple basic but worth. Feels like home"`,
-        rating: 5,
-        type: "feedback",
-      },
-      {
-        id: 3,
-        avatar: image13,
-        type: "image",
-      },
-    ],
-    "Me:namHomestay(Majuli)": [
-      {
-        id: 1,
-        name: "Ram Pershad",
-        date: "a monthb ago",
-        avatar:
-          "https://lh3.googleusercontent.com/a-/ALV-UjWE3bGnK6ATaJ3gqP1wPSBDsJ0oPV43SofR4UiwnBC9GvdJWgb3Gg=w54-h54-p-rp-mo-ba3-br100",
-        feedback: `"This place is a treat. The food was absolutely delicious, with every meal full of flavor and made with care. The hosts were incredibly warm and welcoming, often going out of their way to ensure we felt at home. Highly recommended for anyone looking for a cozy, memorable stay with amazing food and hosts! No better people to explore Majuli with,  such a beautiful community."`,
-        rating: 5,
-        type: "feedback",
-      },
-      {
-        id: 3,
-        avatar: image12,
-        type: "image",
-      },
-      {
-        id: 2,
-        name: "Abhishek Sutar",
-        date: "3 month ago",
-        avatar:
-          "https://lh3.googleusercontent.com/a-/ALV-UjXXQvnSyn0J2GU53-PLZvMvTeog1NNCQ4zVmLmhJXaNwHTjp0Gy=w54-h54-p-rp-mo-br100",
-        feedback: `"What a lovely homestay!!! Cynthia and her family took such a good care of us during our stay and provided amazing meals even during our camping days along the river. Would surely recommend a stay here if in Majuli. The area is much less busy than the side of the island and it was very interesting to learn about Mising traditions. Thank you so much!!"`,
-        rating: 5,
-        type: "feedback",
-      },
-      {
-        id: 3,
-        avatar: image13,
-        type: "image",
-      },
-    ],
-  };
-
   const propertyNameForReview = property?.name?.replaceAll(" ", "") || "";
   console.log("propertyNameForReview", propertyNameForReview);
   const guestSummary = `${adults} Adult${
@@ -355,7 +107,24 @@ The hospitality from the PinesAndTails team was truly exceptional. "`,
       }
     };
     fetchProperty();
-  }, [id]);
+  }, []);
+  
+useEffect(() => {
+  const fetchProperty = async () => {
+    try {
+      console.log("reviews");
+      console.log(id);
+      const rev = await axios.get(`${BASE_URL}/reviews/${id}`);
+      console.log(rev.data); // Should show { success: true, reviews: [...] }
+      setreviews(rev.data.reviews);
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+    }
+    console.log(reviews);
+    console.log("efed");
+  };
+  fetchProperty();
+}, []);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -810,6 +579,8 @@ The hospitality from the PinesAndTails team was truly exceptional. "`,
                     : "bg-white text-gray-800"
                 }`}
               >
+
+
                 {button.label}
               </a>
             ))}
@@ -1002,60 +773,64 @@ The hospitality from the PinesAndTails team was truly exceptional. "`,
             </h1>
 
             {/* Carousel */}
-            <Slider {...settings} className="w-full ">
-              {reviews[propertyNameForReview]?.map((review, index) => (
-                <div key={index} className="p-2">
-                  {review.type === "image" ? (
-                    // If type is "image", render an image
-                    <div
-                      className="flex justify-center"
-                      style={{ height: "360px" }}
-                    >
+            <Slider {...settings} className="w-full">
+            {reviews?.map((review, index) => (
+              <div key={index} className="p-2">
+                <div
+                  className="bg-white p-6 rounded-xl shadow-md border border-gray-200 h-full flex flex-col sm:flex-row items-start gap-4"
+                  style={{ height: "360px" }}
+                >
+                  {/* User Info + Comment + Rating */}
+                  <div className="flex flex-col sm:w-1/2 w-full">
+                    <div className="flex items-center space-x-4 mb-4">
                       <img
-                        src={review.avatar}
-                        alt="Review Image"
-                        className="rounded-lg object-fill  w-full h-full"
+                        src={review.user?.avatar || "https://www.gravatar.com/avatar/"}
+                        alt="User Avatar"
+                        className="w-12 h-12 rounded-full object-cover"
                       />
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-800">
+                          {review.user?.name || "Anonymous"}
+                        </h3>
+                        <p className="text-sm text-gray-500">
+                          {new Date(review.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
                     </div>
-                  ) : (
-                    // If type is "feedback", render the review card
-                    <div
-                      style={{ height: "360px" }}
-                      className="bg-white p-6 rounded-xl shadow-md border border-gray-200 h-full"
-                    >
-                      {/* User Info */}
-                      <div className="flex items-center space-x-4 mb-4">
-                        <img
-                          src={review.avatar}
-                          alt="User Avatar"
-                          className="w-12 h-12 rounded-full object-cover"
-                        />
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-800">
-                            {review.name}
-                          </h3>
-                          <p className="text-sm text-gray-500">{review.date}</p>
-                        </div>
-                      </div>
 
-                      {/* Feedback Content */}
-                      <p className="text-gray-700 mb-4 text-sm sm:text-md text-justify sm:text-left">
-                        {review.feedback}
-                      </p>
+                    <p className="text-gray-700 mb-4 text-sm sm:text-md text-justify sm:text-left">
+                      {review.comment}
+                    </p>
 
-                      {/* Rating */}
-                      <div className="flex items-center space-x-1">
-                        {[...Array(review.rating)].map((_, star) => (
-                          <span key={star} className="text-yellow-500 text-xl">
-                            ★
-                          </span>
-                        ))}
-                      </div>
+                    <div className="flex items-center space-x-1">
+                      {[...Array(review.rating)].map((_, star) => (
+                        <span key={star} className="text-yellow-500 text-xl">
+                          ★
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Show image only if valid */}
+                  {review.image && review.image.trim() !== "" && (
+                    <div className="flex justify-center items-center sm:w-1/2 w-full h-full">
+                      <img
+                        src={review.image}
+                        alt="Review"
+                        className="rounded-lg object-cover w-full h-full max-h-[300px]"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "https://via.placeholder.com/300x300?text=Image+Not+Found";
+                        }}
+                      />
                     </div>
                   )}
                 </div>
-              ))}
-            </Slider>
+              </div>
+            ))}
+          </Slider>
+
+
           </div>
         </div>
 

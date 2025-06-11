@@ -11,10 +11,11 @@ exports.getAllReviews = async (req, res) => {
     }
 }
 
+
+
 exports.createReview = async (req, res) => {
     try {
         const { user, tour, rating, comment } = req.body;
-
         const userExists = await User.findById(user);
         if (!userExists) return res.status(400).json({ error: 'User not found.' });
 
@@ -26,6 +27,21 @@ exports.createReview = async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
+}
+
+exports.getReviewbyproperty = async (req, res) => {
+  try {
+    const propertyId = req.params.id;
+    console.log(propertyId);
+    const reviews = await Review.find({ property:propertyId })
+      .populate('user', 'name avatar email')
+      .sort({ createdAt: -1 });
+    console.log(reviews);
+    res.json({ success: true, reviews });
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
 }
 
 exports.getReviewById = async (req, res) => {
