@@ -34,7 +34,7 @@ const Register = () => {
 
     // New password validation
     const passwordRegex =
-      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!#%*?&])[A-Za-z\d@$#!%*?&]{8,}$/;
     if (!passwordRegex.test(password)) {
       setError(
         "Password must be at least 8 characters long and include letters, numbers, and special symbols."

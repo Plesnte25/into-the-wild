@@ -21,6 +21,7 @@ const ContactForm = ({ isOpen, onClose, isTour }) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
     setErrors({ ...errors, [name]: "" }); // Clear error on change
+    console.log(formData);
   };
 
   const validateForm = () => {

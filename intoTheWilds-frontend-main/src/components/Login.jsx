@@ -33,16 +33,29 @@ const Login = () => {
         { withCredentials: true }
       );
 
-      // persist session (optional)
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      const { token, user } = data;
 
-      // role‑based redirect
-      const role = data?.user?.role?.toLowerCase();
+      // Persist session
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      const role = user?.role?.toLowerCase();
       if (role === "admin") {
-        navigate("/admin", { replace: true });
+        navigate("/admin", {
+          replace: true,
+          state: {
+            token,
+            user,
+          },
+        });
       } else {
-        navigate("/", { replace: true });
+        navigate("/", {
+          replace: true,
+          state: {
+            token,
+            user,
+          },
+        });
       }
     } catch (err) {
       const msg = err.response?.data?.message || "Login failed";
