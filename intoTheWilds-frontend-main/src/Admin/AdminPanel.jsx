@@ -5,10 +5,11 @@ import {
   LineChart,
   Line,
   XAxis,
+  YAxis,
   Tooltip,
   ResponsiveContainer,
   CartesianGrid,
-  YAxis,
+  Legend,
 } from "recharts";
 import {
   Menu,
@@ -16,6 +17,7 @@ import {
   ChevronLeft,
   NotebookPen,
   Home,
+  IndianRupee,
   CalendarCheck,
   Building2,
   Users2,
@@ -72,23 +74,13 @@ function SidebarItem({ to, label, icon }) {
 export default function AdminPanel() {
   const [open, setOpen] = useState(false); // sidebar state on mobile
   const navigate = useNavigate();
+  const [opacity, setOpacity] = useState({
+    revenue: 1,
+    expenses: 1,
+  });
 
   return (
     <div className="h-screen w-screen flex flex-col bg-slate-950 text-slate-100">
-      {/* Top bar */}
-      <header className="flex items-center justify-between gap-4 px-4 lg:px-8 h-14 border-b border-slate-800">
-        <button
-          className="lg:hidden p-1 rounded-md hover:bg-slate-800 border-none text-red-50"
-          onClick={() => setOpen(true)}
-        >
-          <Menu size={30} />
-        </button>
-        <h1 className="text-xl font-bold tracking-wide">OVERVIEW</h1>
-        <button className="bg-emerald-600 hover:bg-emerald-700 text-sm px-6 py-1 rounded-md">
-          <NotebookPen /> Export Data
-        </button>
-      </header>
-
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <aside
@@ -98,14 +90,8 @@ export default function AdminPanel() {
         >
           <div className="flex items-center justify-between p-4 border-b border-slate-800 lg:hidden">
             <span className="font-semibold">Menu</span>
-            <button
-              className="p-1 rounded-md hover:bg-slate-800"
-              onClick={() => setOpen(false)}
-            >
-              <ChevronLeft size={20} />
-            </button>
           </div>
-          <nav className="flex flex-col gap-1 p-4 overflow-y-auto h-full pb-24 lg:pb-4">
+          <nav className="flex flex-col gap-3 p-4 overflow-y-auto h-full pb-24 lg:pb-4">
             <SidebarItem
               to="/admin"
               label="Dashboard"
@@ -150,47 +136,82 @@ export default function AdminPanel() {
 
         {/* Main content */}
         <main className="flex-1 overflow-y-auto p-4 lg:p-8 space-y-6">
+          {/* Top Bar */}
+          <header className="flex items-center justify-between gap-4 px-4 lg:px-8 h-14 border-slate-800">
+            <button
+              className="lg:hidden p-1 rounded-md hover:bg-slate-800 border-none"
+              onClick={() => setOpen(true)}
+            >
+              <Menu size={25} color="white" />
+            </button>
+            <h1 className="text-3xl font-bold tracking-wide">OVERVIEW</h1>
+            <button className="bg-emerald-600 hover:bg-emerald-700 text-sm px-2 py-1 rounded-md">
+              <SidebarItem
+                to="/"
+                label="Export Data"
+                icon={<NotebookPen size={20} color="white" />}
+              />
+            </button>
+          </header>
           <Outlet /> {/* Sub‑pages render here */}
           {/* ---- Overview default ---- */}
-          <section className="grid gap-6 xl:grid-cols-3">
+          <section className="grid gap-6 xl:grid-cols-4">
             {/* KPI Tiles */}
             {kpis.map((kpi) => (
               <div
                 key={kpi.label}
                 className="bg-slate-900 rounded-xl p-4 flex flex-col gap-1 shadow-inner"
               >
-                <span className="text-xs uppercase tracking-wide text-slate-400">
+                <span className="text-lg uppercase tracking-wide text-slate-400">
                   {kpi.label}
                 </span>
-                <span className="text-2xl font-semibold">{kpi.value}</span>
-                <span className="text-emerald-400 text-xs">{kpi.delta}</span>
+                <div className="">
+                  <span className="text-2xl font-semibold pr-4">
+                    {kpi.value}
+                  </span>
+                  <span className="text-emerald-400 text-md">{kpi.delta}</span>
+                </div>
               </div>
             ))}
           </section>
           {/* Charts */}
           <section className="grid gap-6 lg:grid-cols-3">
             <div className="col-span-2 bg-slate-900 p-4 rounded-xl shadow-inner">
-              <h3 className="text-sm mb-2 font-medium text-slate-300">
+              <div className="py-2">
+              <h1 className="text-lg mb-2 font-medium text-slate-300">
                 Total Revenue
-              </h3>
-              <ResponsiveContainer width="100%" height={260}>
+              </h1>
+              <div className="flex items-center justify-betwen py-1">
+                <IndianRupee size={25} className="inline mr-1" />
+                <span className="text-2xl font-semibold pr-4">
+                  1347
+                </span>
+                <span className="text-emerald-400 text-md">
+                  +10%
+                </span>
+              </div>
+              </div>
+              <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={revenueData} margin={{ left: -20, right: 10 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                   <XAxis dataKey="month" stroke="#64748b" />
                   <YAxis stroke="#64748b" />
                   <Tooltip cursor={{ fill: "#1e293b" }} />
                   <Line
+                    name="Revenue"
                     type="monotone"
                     dataKey="revenue"
                     stroke="#06b6d4"
-                    strokeWidth={2}
+                    strokeWidth={1.5}
                   />
                   <Line
+                    name="Expenses"
                     type="monotone"
                     dataKey="expenses"
                     stroke="#c084fc"
-                    strokeWidth={2}
+                    strokeWidth={1.5}
                   />
+                  <Legend />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -202,10 +223,11 @@ export default function AdminPanel() {
               <ResponsiveContainer width="100%" height={120}>
                 <BarChart data={revenueData.slice(0, 6)}>
                   <Bar dataKey="revenue" fill="#06b6d4" radius={[4, 4, 0, 0]} />
+                  <XAxis dataKey="quarter" stroke="#64748b" />
                 </BarChart>
               </ResponsiveContainer>
               <h3 className="text-sm font-medium text-slate-300 mt-4">
-                Total Sessions
+                Total Visitors
               </h3>
               <ResponsiveContainer width="100%" height={80}>
                 <LineChart data={revenueData.slice(0, 6)}>
@@ -215,6 +237,8 @@ export default function AdminPanel() {
                     stroke="#c084fc"
                     strokeWidth={2}
                   />
+                  <XAxis dataKey="month" stroke="#64748b" />
+
                 </LineChart>
               </ResponsiveContainer>
             </div>
