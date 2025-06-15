@@ -1,16 +1,7 @@
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const User = require("../models/User");
-// const SendmailTransport = require("nodemailer/lib/sendmail-transport");
 require("dotenv").config();
-// Nodemailer transporter setup
-// const transporter = nodemailer.createTransport({
-//   service: "Gmail", // Change if using another provider
-//   auth: {
-//     user: process.env.EMAIL_USER,
-//     pass: process.env.EMAIL_PASS,
-//   },
-// });
 
 function buildTransporter() {
   const { EMAIL_HOST, EMAIL_USER, EMAIL_PASS, EMAIL_PORT } = process.env;
@@ -26,6 +17,11 @@ function buildTransporter() {
   });
 }
 const transporter = buildTransporter();
+
+const isLocalDev = () =>
+  process.env.NODE_ENV !== "production" &&
+  (process.env.LOCAL_DEV === "true" ||
+    (process.env.ORIGIN && process.env.ORIGIN.includes("localhost")));
 
 // Generate OTP
 const generateOTP = () => {
@@ -179,7 +175,7 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { emailorphone, password } = req.body;
-    console.log(emailorphone,password);
+    console.log(emailorphone, password);
     if (!emailorphone || !password)
       return res.status(400).json({ message: "All fields are required" });
 
@@ -195,11 +191,15 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ $or: conditions }).select("+password");
 
     if (!user)
-      return res.status(401).json({ success: false, message: "User not found" });
+      return res
+        .status(401)
+        .json({ success: false, message: "User not found" });
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch)
-      return res.status(401).json({ success: false, message: "Invalid credentials" });
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials" });
 
     if (transporter) {
       transporter
