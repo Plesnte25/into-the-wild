@@ -14,7 +14,7 @@ const authenticateToken = (req, res, next) => {
       });
     }
 
-    const token = authHeader.split(' ')[1];
+    const token = authHeader && authHeader.split(' ')[1];
     if (!token) {
       return res.status(401).json({ 
         error: { 
@@ -24,7 +24,7 @@ const authenticateToken = (req, res, next) => {
       });
     }
 
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
       if (err) {
         // console.log('JWT Verification Error:', err);
         return res.status(401).json({ 
@@ -34,7 +34,7 @@ const authenticateToken = (req, res, next) => {
           }
         });
       }
-      req.user = decoded;
+      req.user = user;
       next();
     });
   } catch (error) {
