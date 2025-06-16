@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus, Pencil } from "lucide-react";
 import {
@@ -18,6 +18,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { api } from "@/api";
+import useReservation from "../hooks/useReservation";
 
 // Mock Data
 const MOCK_PROPERTIES = Array.from({ length: 25 }).map((_, idx) => ({
@@ -82,7 +84,28 @@ function EditBooking({ property }) {
         <DialogHeader>
           <DialogTitle>Edit {property.name}</DialogTitle>
         </DialogHeader>
-        {/* TODO: replace with real form */}
+        {/* Modal Body */}
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            const status = e.target.status.value;
+            await api.patch(`/bookings/${property._id}`, { status });
+            mutate();
+          }}
+          className="space-y-4"
+        >
+          <select
+            name="status"
+            defaultValue={property.status}
+            className="w-full bg-slate-800 p-2 rounded\"
+          >
+            <option value="confirmed">confirmed</option>
+            <option value="cancelled">cancelled</option>
+          </select>
+          <Button type="submit" size="sm">
+            Save
+          </Button>
+        </form>
         <div className="text-slate-300 text-sm">
           Modal body – form goes here…
         </div>
@@ -95,8 +118,22 @@ function EditBooking({ property }) {
 
 export default function Reservation() {
   const navigate = useNavigate();
-  const [data] = useState(MOCK_PROPERTIES);
+  const { data, isLoading, isError } = useReservation("month");
 
+  if (isLoading) return <div>Loading bookings...</div>;
+  if (isError) {
+    if (isError.response?.status === 401) {
+      return (
+        <div className="text-center py-12">
+          <h3 className="text-lg font-medium">Session Expired</h3>
+          <Button onClick={() => navigate("/login")} className="mt-4">
+            Re-login
+          </Button>
+        </div>
+      );
+    }
+    return <div>Error loading bookings</div>;
+  }
   /* -------- table columns --------*/
   const columns = useMemo(
     () => [
