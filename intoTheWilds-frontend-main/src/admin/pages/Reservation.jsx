@@ -84,7 +84,11 @@ function EditBooking({ property }) {
         <DialogHeader>
           <DialogTitle>Edit {property.name}</DialogTitle>
         </DialogHeader>
+<<<<<<< HEAD
         {/* Modal Body */}
+=======
+        {/* TODO: replace with real form */}
+>>>>>>> 5832bf3 (sidebar responsiveness bug solved)
         <form
           onSubmit={async (e) => {
             e.preventDefault();
@@ -106,6 +110,10 @@ function EditBooking({ property }) {
             Save
           </Button>
         </form>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5832bf3 (sidebar responsiveness bug solved)
         <div className="text-slate-300 text-sm">
           Modal body – form goes here…
         </div>
