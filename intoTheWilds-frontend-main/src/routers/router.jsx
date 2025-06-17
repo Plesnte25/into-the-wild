@@ -1,14 +1,13 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
 import Home from "../pages/Home";
-import Properties from "../pages/Properties"; // Make sure this path is correct
+import Properties from "../pages/Properties";
 import Tours from "../pages/Tours";
 import ContactUs from "../pages/ContactUs";
 import AboutUs from "./../pages/AboutUs";
 import Blog from "../pages/Blog";
 import Login from "./../components/Login";
 import Register from "./../components/Register";
-import AdminPanel from "./../Admin/AdminPanel";
 import ExploreMoreITW from "./../components/ExploreMoreITW";
 import { BlogPost } from "./../components/BlogPost";
 import UserProfile from "./../components/UserProfile";
@@ -18,6 +17,13 @@ import ToursDetail from "../pages/ToursDetail";
 import NotFound from "../pages/NotFound";
 import Checkout from "../components/Checkout";
 import Review from "../pages/Review";
+
+import AdminLayout from "../admin/layout/AdminLayout";
+import Dashboard from "../admin/pages/Dashboard";
+import Reservation from "../admin/pages/Reservation";
+import Realty from "../admin/pages/Realty";
+import Settings from "../admin/pages/Settings";
+
 
 const blogs = [];
 
@@ -31,7 +37,7 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "/properties", // New route for the Properties page
+        path: "/properties",
         element: <Properties />,
       },
       {
@@ -52,7 +58,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/checkout",
-        element: <Checkout/>,
+        element: <Checkout />,
       },
       {
         path: "/about-us",
@@ -70,10 +76,10 @@ const router = createBrowserRouter([
         path: "/register",
         element: <Register />,
       },
-      {
-        path: "/admin",
-        element: <AdminPanel />,
-      },
+      // {
+      //   path: "/admin",
+      //   element: <Dashboard />, //Admin Panel
+      // },
       {
         path: "/user-profile",
         element: <UserProfile />,
@@ -99,6 +105,16 @@ const router = createBrowserRouter([
         element:<Review/>,
       }
     ],
+  },
+  {
+    path: "/admin",
+    element: <AdminLayout/>,
+    children: [
+      { index: true, element:<Dashboard/>},
+      { path: "reservation", element:<Reservation/>},
+      { path: "realty", element:<Realty/>},
+      { path: "settings", element:<Settings/>},
+    ]
   },
 ]);
 

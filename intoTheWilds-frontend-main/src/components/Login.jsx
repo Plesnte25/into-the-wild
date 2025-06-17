@@ -20,7 +20,6 @@ const Login = () => {
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const navigate = useNavigate();
   // const [form, setForm] = useState({ emailorphone:"",password:"" });
-
   // const handleChange = (e) =>
   //   setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
