@@ -1,5 +1,5 @@
 const Review = require('../models/Review');
-const User = require('../models/User').default;
+const User = require('../models/User');
 const Tour = require('../models/Properties');
 
 exports.getAllReviews = async (req, res) => {
@@ -11,18 +11,37 @@ exports.getAllReviews = async (req, res) => {
     }
 }
 
+exports.getLatestReviews = async (req, res) => {
+  try {
+    const reviews = await Review.find()
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .populate('user', 'name')             // only populate 'name' field of user
+      .populate('property', 'title location'); // only populate 'title' & 'location'
+
+    res.status(200).json({ success: true, reviews });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 
 exports.createReview = async (req, res) => {
     try {
-        const { user, tour, rating, comment } = req.body;
+        const user = req.body.user;
+        const message=req.body.message;
+        const property=req.body.property;
+        const rating=req.body.rating;
+        const image=req.body.image;
+        console.log(user);
         const userExists = await User.findById(user);
+        console.log(userExists);
         if (!userExists) return res.status(400).json({ error: 'User not found.' });
 
-        const tourExists = await Tour.findById(tour);
+        const tourExists = await Tour.findById(property);
         if (!tourExists) return res.status(400).json({ error: 'Tour not found.' });
 
-        const review = await Review.create({ user, tour, rating, comment });
+        const review = await Review.create({user:user,comment:message,property:property,rating:rating,image:image});
         res.status(201).json({ success: true, review });
     } catch (err) {
         res.status(500).json({ error: err.message });

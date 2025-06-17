@@ -132,8 +132,8 @@ const PropertyListingModal = ({ isOpen, onClose }) => {
       <X className="w-6 h-6" />
     </button>
 
-    <h2 className="text-3xl font-bold text-white mb-2 text-center">
-      List Your Property
+    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 text-center">
+  List Your Property
     </h2>
     <p className="text-gray-300 text-center">
       Join our network of exclusive properties
@@ -534,10 +534,19 @@ export default function Navbar() {
 
             <button
               onClick={() => setIsPropertyModalOpen(true)}
-              className="bg-gradient-to-r from-yellow-500 to-yellow-400 hover:from-yellow-400 hover:to-yellow-500 text-black px-5 py-2.5 rounded-lg font-bold shadow-lg hover:shadow-yellow-500/20 transition-all duration-300 transform hover:scale-105"
+              className="bg-gradient-to-r from-yellow-500 to-yellow-400 
+                        hover:from-yellow-400 hover:to-yellow-500 
+                        text-black text-sm sm:text-base md:text-lg 
+                        px-4 sm:px-6 md:px-8 py-2 sm:py-2.5 
+                        rounded-lg font-bold 
+                        shadow-lg hover:shadow-yellow-500/20 
+                        transition-all duration-300 transform hover:scale-105 
+                        flex items-center justify-center text-center 
+                        w-full sm:w-auto"
             >
               List Your Property
             </button>
+
 
             <Link
               to="/user-profile"
