@@ -180,6 +180,7 @@ const handleSubmit = (e) => {
 const UserProfile = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  console.log("loaction",location.state);
   const [user, setUser] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const localUser = localStorage.getItem("user") || "{}";
@@ -366,32 +367,60 @@ const UserProfile = () => {
             <th className="py-3 px-4 border whitespace-nowrap">Payment Status</th>
             <th className="py-3 px-4 border whitespace-nowrap">Rooms Booked</th>
             <th className="py-3 px-4 border whitespace-nowrap">Amount Paid</th>
+            <th className="py-3 px-4 border whitespace-nowrap">Review</th>
           </tr>
         </thead>
         <tbody>
-          {bookings.map((booking) => (
-            <tr key={booking?._id} className="hover:bg-gray-100">
-              <td className="py-2 px-4 border">{booking?.property?.name}</td>
-              <td className="py-2 px-4 border">
-                {new Date(booking?.checkInDate).toLocaleDateString()}
-              </td>
-              <td className="py-2 px-4 border">
-                {new Date(booking?.checkOutDate).toLocaleDateString()}
-              </td>
-              <td
-                className={`py-2 px-4 border font-semibold ${
-                  booking?.status === "confirmed"
-                    ? "text-green-700"
-                    : "text-yellow-700"
-                }`}
-              >
-                {booking?.status === "confirmed" ? "Confirmed" : "Pending"}
-              </td>
-              <td className="py-2 px-4 border">{booking?.roomBooked}</td>
-              <td className="py-2 px-4 border">₹{booking?.amount}</td>
-            </tr>
-          ))}
-        </tbody>
+  {bookings.map((booking) => {
+    const checkOutDate = new Date(booking?.checkOutDate);
+    const now = new Date();
+    const isPast = checkOutDate < now;
+
+    return (
+      <tr key={booking?._id} className="hover:bg-gray-100">
+        <td className="py-2 px-4 border">{booking?.property?.name}</td>
+        <td className="py-2 px-4 border">
+          {new Date(booking?.checkInDate).toLocaleDateString()}
+        </td>
+        <td className="py-2 px-4 border">
+          {checkOutDate.toLocaleDateString()}
+        </td>
+        <td
+          className={`py-2 px-4 border font-semibold ${
+            booking?.status === "confirmed"
+              ? "text-green-700"
+              : "text-yellow-700"
+          }`}
+        >
+          {booking?.status === "confirmed" ? "Confirmed" : "Pending"}
+        </td>
+        <td className="py-2 px-4 border">{booking?.roomBooked}</td>
+        <td className="py-2 px-4 border">₹{booking?.amount}</td>
+
+        {/* Review Button column (conditionally shown) */}
+        <td className="py-2 px-4 border">
+          {isPast && (
+            <button
+              className="bg-[#0F2642] text-white px-3 py-1 rounded hover:bg-[#1d3c60] transition"
+              onClick={() =>
+                navigate("/review", {
+                  state: {
+                    user,
+                    property: booking?.property,
+                    bookingId: booking?._id,
+                  },
+                })
+              }
+            >
+              Add Review
+            </button>
+          )}
+        </td>
+      </tr>
+    );
+  })}
+</tbody>
+
       </table>
     </div>
   )}

@@ -1,5 +1,5 @@
 const express = require('express');
-const User = require('../models/User').default;
+const User = require('../models/User');
 
 const router = express.Router();
 
@@ -24,7 +24,10 @@ exports.editUser = async (req, res) => {
 exports.getUser = async (req, res) => {
     try {
         const userId = req.params.id;
-        const user = await User.findById({ _id: userId });
+        console.log("dw",userId);
+        const user = await User.findById(userId);;
+        console.log("jb");
+        console.log(user);
         if (user) {
             res.status(200).json(user);
         } else { 

@@ -309,7 +309,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center space-x-3">
                 <Mail size={16} />
-                <a href="mailto:intothewildstays@gmail.com">
+                <a href="https://mail.google.com/mail/?view=cm&to=intothewildstays@gmail.com" target="_blank" rel="noopener noreferrer">
                   intothewildstays@gmail.com
                 </a>
               </li>

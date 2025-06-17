@@ -17,6 +17,7 @@ import EventDetail from "../pages/EventDetail";
 import ToursDetail from "../pages/ToursDetail";
 import NotFound from "../pages/NotFound";
 import Checkout from "../components/Checkout";
+import Review from "../pages/Review";
 
 const blogs = [];
 
@@ -93,6 +94,10 @@ const router = createBrowserRouter([
         path: "*",
         element: <NotFound />,
       },
+      {
+        path:"review",
+        element:<Review/>,
+      }
     ],
   },
 ]);
