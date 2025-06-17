@@ -1,0 +1,74 @@
+import { NavLink } from "react-router-dom";
+import {
+  Home,
+  CalendarCheck,
+  Building2,
+  Users2,
+  Settings,
+  LogOut,
+} from "lucide-react";
+
+const items = [
+  { to: "/admin", icon: <Home size={18} />, end: true, label: "Dashboard" },
+  {
+    to: "/admin/realty",
+    icon: <Building2 size={18} />,
+    label: "Properties",
+  },
+  {
+    to: "/admin/reservation",
+    icon: <CalendarCheck size={18} />,
+    label: "Bookings",
+  },
+  {
+    to: "/admin/settings",
+    icon: <Settings size={18} />,
+    label: "Settings",
+  },
+];
+
+export default function Sidebar({ collapsed, toggle, onExit }) {
+  return (
+    <aside
+      className={`bg-slate-900 h-full transition-all ${
+        collapsed ? "w-16" : "w-60"
+      }`}
+    >
+      {/* collapse btn */}
+      <button
+        onClick={toggle}
+        className="w-full flex justify-end p-3 hover:bg-slate-800"
+      >
+        {collapsed ? "»" : "«"}
+      </button>
+
+      <nav className="flex flex-col gap-2 px-2">
+        {items.map(({ to, label, icon }) => (
+          <NavLink
+            key={to}
+            to={to}
+            end
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-4 py-2 rounded-md text-sm
+               ${
+                 isActive
+                   ? "bg-slate-800 text-cyan-400"
+                   : "text-slate-300 hover:bg-slate-800"
+               }`
+            }
+          >
+            {icon}
+            {!collapsed && <span className="truncate">{label}</span>}
+          </NavLink>
+        ))}
+      </nav>
+
+      <button
+        onClick={onExit}
+        className="mx-2 mt-auto mb-4 flex items-center gap-3 px-4 py-2 rounded-md bg-pink-600/20 text-pink-200 hover:bg-pink-600/30"
+      >
+        <LogOut size={18} /> {!collapsed && "Exit"}
+      </button>
+    </aside>
+  );
+}
