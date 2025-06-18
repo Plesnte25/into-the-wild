@@ -84,7 +84,6 @@ function EditBooking({ property }) {
         <DialogHeader>
           <DialogTitle>Edit {property.name}</DialogTitle>
         </DialogHeader>
-        {/* Modal Body */}
         <form
           onSubmit={async (e) => {
             e.preventDefault();

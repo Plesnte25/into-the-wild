@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, User, Phone, Mail, Instagram, Send } from "lucide-react";
+import { Menu, X, User, Phone, Mail, Send } from "lucide-react";
 import { Link } from "react-router-dom";
 import logo from "../assets/IntotheWildStaysLogo.png";
 import { motion, AnimatePresence } from "framer-motion";

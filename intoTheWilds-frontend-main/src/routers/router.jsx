@@ -77,10 +77,6 @@ const router = createBrowserRouter([
         path: "/register",
         element: <Register />,
       },
-      // {
-      //   path: "/admin",
-      //   element: <Dashboard />, //Admin Panel
-      // },
       {
         path: "/user-profile",
         element: <UserProfile />,
