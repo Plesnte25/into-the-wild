@@ -11,35 +11,30 @@ import {
   Legend,
 } from "recharts";
 import { IndianRupee } from "lucide-react";
+import axios from "axios";
+import{React,useState,useEffect} from "react";
+import { BASE_URL } from "@/utils/baseurl";
 
 // Static data - need to change with actual data
-const kpis = [
-  { label: "Total Bookings", value: 1340, delta: "+28.4%" },
-  { label: "Cancelled", value: 340, delta: "+3.2%" },
-  { label: "Total Properties", value: 56, delta: "+28.4%" },
-  { label: "Total Visitors", value: 2364, delta: "+28.4%" },
-  { label: "Online Bookings", value: 1200, delta: "+28.4%" },
-  { label: "Offline Booking", value: 140, delta: "+28.4%" },
-  { label: "Total Location", value: 56, delta: "+28.4%" },
-  { label: "Partners", value: 25, delta: "+28.4%" },
-];
-
-const revenueData = [
-  { month: "Jan", revenue: 25, expenses: 10 },
-  { month: "Feb", revenue: 35, expenses: 17 },
-  { month: "Mar", revenue: 50, expenses: 20 },
-  { month: "Apr", revenue: 65, expenses: 25 },
-  { month: "May", revenue: 80, expenses: 33 },
-  { month: "Jun", revenue: 95, expenses: 45 },
-  { month: "Jul", revenue: 105, expenses: 52 },
-  { month: "Aug", revenue: 120, expenses: 60 },
-  { month: "Sep", revenue: 135, expenses: 70 },
-  { month: "Oct", revenue: 150, expenses: 79 },
-  { month: "Nov", revenue: 170, expenses: 88 },
-  { month: "Dec", revenue: 200, expenses: 95 },
-];
 
 export default function Overview() {
+  const [kpis, setKpis] = useState([]);
+  const [revenueData, setRevenueData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await axios.get(`${BASE_URL}/dashboard/overview`, {
+          headers: {
+            authorization:`Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+      setKpis(res.data.kpis);
+      setRevenueData(res.data.revenueData);
+    };
+    fetchData();
+  }, []);
+  console.log("kpis",kpis);
+
   return (
     <main className="flex-1 overflow-y-auto p-4 lg:p-8 space-y-6">
       <section className="grid gap-6 xl:grid-cols-4">

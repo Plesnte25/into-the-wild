@@ -3,6 +3,8 @@ import { Menu, X, User, Phone, Mail, Send } from "lucide-react";
 import { Link } from "react-router-dom";
 import logo from "../assets/IntotheWildStaysLogo.png";
 import { motion, AnimatePresence } from "framer-motion";
+import { Instagram } from 'lucide-react';
+
 
 // Modal Component for Property Listing Form
 const PropertyListingModal = ({ isOpen, onClose }) => {

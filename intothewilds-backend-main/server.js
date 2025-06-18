@@ -15,6 +15,8 @@ const eventQueryRoutes = require("./routes/eventQueryRoutes");
 const reviewsRoutes = require("./routes/reviewRoutes");
 const airbnbRoutes = require("./routes/calendarRoutes");
 const rateLimiter = require("express-rate-limit");
+const dashboardRoutes = require('./routes/dashboardRoutes');
+
 dotenv.config();
 
 const app = express();
@@ -30,6 +32,7 @@ app.use(
 app.use(
   cors({
     origin: [
+      "http://localhost:5173",
       "http://localhost:5174",
       "https://intothewildstays.in",
       "https://www.intothewildstays.in",
@@ -77,5 +80,6 @@ app.use("/api/v1/toursQuery", toursQueryRoutes);
 app.use("/api/v1/eventQuery", eventQueryRoutes);
 app.use("/api/v1/reviews", reviewsRoutes);
 app.use("/api/v1/calendar", airbnbRoutes);
+app.use('/api/v1/dashboard', dashboardRoutes);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

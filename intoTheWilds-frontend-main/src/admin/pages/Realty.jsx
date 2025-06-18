@@ -1,8 +1,8 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { Plus, Pencil } from "lucide-react";
 import {
-  Column,
   useTable,
   useGlobalFilter,
   useSortBy,
@@ -18,25 +18,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BASE_URL } from "@/utils/baseurl";
 
-// Mock Data
-const MOCK_PROPERTIES = Array.from({ length: 25 }).map((_, idx) => ({
-  id: `PROP-${1000 + idx}`,
-  name: `Villa Serenity ${idx + 1}`,
-  location: ["Goa", "Assam", "Rishikesh", "Jaipur"][idx % 4],
-  owner: "John Doe",
-  status: idx % 4 === 0 ? "Pending" : "Live",
-  rooms: 8 + (idx % 5),
-  contact: "+91 9876543210",
-  occupied: 3 + (idx % 5),
-  vacant: 5 - (idx % 3),
-}));
-
-// Summary Component
-function Summary() {
-  const total = MOCK_PROPERTIES.length;
-  const live = MOCK_PROPERTIES.filter((p) => p.status === "Live").length;
-  const pending = MOCK_PROPERTIES.filter((p) => p.status === "Pending").length;
+function Summary({ properties }) {
+  if (!properties) return null;
+  const total = properties.length;
+  const live = properties.filter((p) => p.status === "Live").length;
+  const pending = properties.filter((p) => p.status === "Pending").length;
   const inactive = total - live - pending;
 
   const cards = [
@@ -47,7 +35,7 @@ function Summary() {
   ];
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 mb-6">
+    <section className="grid gap-6 xl:grid-cols-4 mb-6">
       {cards.map((card) => (
         <Card key={card.label} className="bg-slate-900 shadow-inner">
           <CardHeader className="pb-2">
@@ -61,20 +49,15 @@ function Summary() {
           </CardContent>
         </Card>
       ))}
-    </div>
+    </section>
   );
 }
 
-// Edit Property Modal Component
 function EditProperty({ property }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          size="sm"
-          variant="ghost"
-          className="text-cyan-400 hover:bg-slate-800"
-        >
+        <Button size="sm" variant="ghost" className="text-cyan-400 hover:bg-slate-800">
           <Pencil size={14} />
         </Button>
       </DialogTrigger>
@@ -82,22 +65,28 @@ function EditProperty({ property }) {
         <DialogHeader>
           <DialogTitle>Edit {property.name}</DialogTitle>
         </DialogHeader>
-        {/* TODO: replace with real form */}
-        <div className="text-slate-300 text-sm">
-          Modal body – form goes here…
-        </div>
+        <div className="text-slate-300 text-sm">Modal body – form goes here…</div>
       </DialogContent>
     </Dialog>
   );
 }
 
-// Main Reservation Component
-
 export default function Realty() {
   const navigate = useNavigate();
-  const [data] = useState(MOCK_PROPERTIES);
+  const [data, setData] = useState([]);
 
-  /* -------- table columns --------*/
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/dashboard/admin/all`);
+        setData(res.data);
+      } catch (err) {
+        console.error("Failed to fetch properties", err);
+      }
+    };
+    fetchProperties();
+  }, []);
+
   const columns = useMemo(
     () => [
       { Header: "ID", accessor: "id" },
@@ -108,11 +97,7 @@ export default function Realty() {
         Header: "STATUS",
         accessor: "status",
         Cell: ({ value }) => (
-          <span
-            className={value === "Live" ? "text-emerald-400" : "text-amber-400"}
-          >
-            {value}
-          </span>
+          <span className={value === "Live" ? "text-emerald-400" : "text-amber-400"}>{value}</span>
         ),
       },
       { Header: "ROOMS", accessor: "rooms" },
@@ -128,13 +113,13 @@ export default function Realty() {
     []
   );
 
-  /* -------- react‑table hooks --------*/
   const tableInstance = useTable(
     { columns, data },
     useGlobalFilter,
     useSortBy,
     usePagination
   );
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -150,26 +135,21 @@ export default function Realty() {
   } = tableInstance;
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
+    <main className="flex-1 full overflow-y-auto p-4 lg:p-8 space-y-6">
+      <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Properties</h2>
-        <Button size="sm" onClick={() => navigate("/admin/properties/new")}>
-          {" "}
-          <Plus size={16} /> Add New
-        </Button>
+        <Button size="sm" onClick={() => navigate("/admin/properties/new")}> <Plus size={16} /> Add New </Button>
       </div>
 
-      <Summary />
+      <Summary properties={data} />
 
-      {/* search */}
       <Input
         placeholder="Search…"
-        className="mb-4 bg-slate-800 border-slate-700 text-slate-300"
+        className="bg-slate-800 border-slate-700 text-slate-300"
         value={state.globalFilter || ""}
         onChange={(e) => setGlobalFilter(e.target.value)}
       />
 
-      {/* table */}
       <div className="overflow-x-auto rounded-lg shadow-inner">
         <table {...getTableProps()} className="min-w-full text-sm bg-slate-900">
           <thead className="bg-slate-800 text-slate-400">
@@ -177,6 +157,7 @@ export default function Realty() {
               <tr {...hg.getHeaderGroupProps()}>
                 {hg.headers.map((col) => (
                   <th
+                    key={col.id}
                     {...col.getHeaderProps(col.getSortByToggleProps())}
                     className="px-4 py-2 text-left whitespace-nowrap"
                   >
@@ -187,14 +168,14 @@ export default function Realty() {
               </tr>
             ))}
           </thead>
-
           <tbody {...getTableBodyProps()} className="divide-y divide-slate-800">
             {page.map((row) => {
               prepareRow(row);
               return (
-                <tr {...row.getRowProps()} className="hover:bg-slate-800/50">
+                <tr key={row.id} {...row.getRowProps()} className="hover:bg-slate-800/50">
                   {row.cells.map((cell) => (
                     <td
+                      key={cell.column.id}
                       {...cell.getCellProps()}
                       className="px-4 py-2 whitespace-nowrap text-slate-300"
                     >
@@ -208,27 +189,14 @@ export default function Realty() {
         </table>
       </div>
 
-      {/* pagination – simple */}
-      <div className="flex items-center justify-end gap-4 mt-4 text-slate-400 text-xs">
-        <Button
-        className="text-white"
-          size="sm"
-          variant="ghost"
-          disabled={!canPreviousPage}
-          onClick={previousPage}
-        >
+      <div className="flex items-center justify-end gap-4 text-slate-400 text-xs">
+        <Button className="text-white" size="sm" variant="ghost" disabled={!canPreviousPage} onClick={previousPage}>
           Prev
         </Button>
-        <Button
-        className="text-white"
-          size="sm"
-          variant="ghost"
-          disabled={!canNextPage}
-          onClick={nextPage}
-        >
+        <Button className="text-white" size="sm" variant="ghost" disabled={!canNextPage} onClick={nextPage}>
           Next
         </Button>
       </div>
-    </div>
+    </main>
   );
 }
