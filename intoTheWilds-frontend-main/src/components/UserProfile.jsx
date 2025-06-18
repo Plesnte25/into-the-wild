@@ -193,7 +193,7 @@ const UserProfile = () => {
       try {
         const res = await axios.get(`${BASE_URL}/booking/userbookings`, {
           headers: {
-            authorization:` Bearer ${localStorage.getItem("token")}`,
+            authorization:`Bearer ${localStorage.getItem("token")}`,
           },
         });
         console.log(res);
@@ -402,15 +402,17 @@ const UserProfile = () => {
           {isPast && (
             <button
               className="bg-[#0F2642] text-white px-3 py-1 rounded hover:bg-[#1d3c60] transition"
-              onClick={() =>
+              onClick={() =>{
+                console.log("aefefefq",user,booking);
                 navigate("/review", {
                   state: {
                     user,
                     property: booking?.property,
                     bookingId: booking?._id,
                   },
+      
                 })
-              }
+              }}
             >
               Add Review
             </button>

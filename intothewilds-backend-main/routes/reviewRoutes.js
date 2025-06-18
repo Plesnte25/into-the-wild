@@ -1,12 +1,28 @@
 const router = require('express').Router();
-
 const reviewController = require('../controller/reviewController.js');
 
-router.get('/:id',reviewController.getReviewbyproperty);
+// Get all reviews
+router.get('/', reviewController.getAllReviews);
+
+// Get latest 10 reviews
+router.get('/latest', reviewController.getLatestReviews);
+
+// Get all reviews for a specific property
+router.get('/property/:id', reviewController.getReviewsByProperty);
+
+// ✅ Get review by booking ID
+router.get('/booking/:id', reviewController.getReviewByBooking);
+
+// Get review by its own ID
+router.get('/review/:id', reviewController.getReviewById);
+
+// Create a review
 router.post('/', reviewController.createReview);
-router.get('/:id', reviewController.getReviewById);
+
+// Update review by ID
 router.put('/:id', reviewController.updateReview);
+
+// Delete review by ID
 router.delete('/:id', reviewController.deleteReview);
-router.get('/', reviewController.getLatestReviews); 
 
 module.exports = router;

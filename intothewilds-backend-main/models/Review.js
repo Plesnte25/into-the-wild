@@ -11,6 +11,12 @@ const reviewSchema = new mongoose.Schema({
     ref: 'Property',
     required: true
   },
+  booking:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'Booking',
+    require:true,
+
+  },
   image: {
     type: String, // Cloudinary URL or file path
     default: null

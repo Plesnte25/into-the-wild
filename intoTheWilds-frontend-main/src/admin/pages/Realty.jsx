@@ -164,7 +164,7 @@ export default function Realty() {
       {/* search */}
       <Input
         placeholder="Search…"
-        className="mb-4 bg-slate-800 border-slate-700"
+        className="mb-4 bg-slate-800 border-slate-700 text-slate-300"
         value={state.globalFilter || ""}
         onChange={(e) => setGlobalFilter(e.target.value)}
       />
@@ -211,6 +211,7 @@ export default function Realty() {
       {/* pagination – simple */}
       <div className="flex items-center justify-end gap-4 mt-4 text-slate-400 text-xs">
         <Button
+        className="text-white"
           size="sm"
           variant="ghost"
           disabled={!canPreviousPage}
@@ -219,6 +220,7 @@ export default function Realty() {
           Prev
         </Button>
         <Button
+        className="text-white"
           size="sm"
           variant="ghost"
           disabled={!canNextPage}

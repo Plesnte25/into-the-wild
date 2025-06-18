@@ -37,10 +37,10 @@ import Image4 from "../assets/itw_rep/itwrep_page-0010.jpg";
 import Image5 from "../assets/itw_rep/itwrep_page-0011.jpg";
 import Image6 from "../assets/itw_rep/itwrep_page-0012.jpg";
 import Image7 from "../assets/itw_rep/itwrep_page-0013.jpg";
-
 const Review = () => {
   const location = useLocation();
   const state = location.state;
+  console.log(state);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -50,6 +50,7 @@ const Review = () => {
     user: "",
     property: "",
     image: "",
+    reviewId: ""
   });
 
   const [reviews, setReviews] = useState([]);
@@ -57,29 +58,61 @@ const Review = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    if (!state || !state.user || !state.property) return;
+    if (!state || !state.user || !state.property || !state.bookingId) return;
 
-    const fetchUserData = async () => {
+    const fetchInitialData = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/user/${state.user.id}`, {
-          headers: {
-            authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const [userRes, reviewRes] = await Promise.all([
+          axios.get(`${BASE_URL}/user/${state.user.id}`, {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }),
+          axios.get(`${BASE_URL}/reviews/booking/${state.bookingId}`)
+        ]);
+
+        const userData = userRes.data;
+        const review = reviewRes.data.review;
 
         setFormData((prev) => ({
           ...prev,
-          name: res.data.name,
-          email: res.data.email,
+          name: userData.name,
+          email: userData.email,
           user: state.user.id,
           property: state.property._id,
+          booking: state.bookingId,
+          message: review?.comment || "",
+          rating: review?.rating || 0,
+          image: review?.image || "",
+          reviewId: review?._id || ""
         }));
       } catch (err) {
-        console.error("Error fetching user:", err);
+        console.error("Error fetching user or review:", err);
+
+        // Still show user info even if review not found
+        try {
+          const userRes = await axios.get(`${BASE_URL}/user/${state.user.id}`, {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+
+          const userData = userRes.data;
+          setFormData((prev) => ({
+            ...prev,
+            name: userData.name,
+            email: userData.email,
+            user: state.user.id,
+            property: state.property._id,
+            booking: state.bookingId
+          }));
+        } catch (err2) {
+          console.error("Fallback user fetch failed:", err2);
+        }
       }
     };
 
-    fetchUserData();
+    fetchInitialData();
   }, [state]);
 
   useEffect(() => {
@@ -118,9 +151,25 @@ const Review = () => {
     e.preventDefault();
     if (!validateForm()) return;
     setIsSubmitting(true);
+
     try {
-      const response = await axios.post(`${BASE_URL}/reviews/`, formData);
-      toast.success("Message sent successfully");
+      const reviewPayload = {
+        user: formData.user,
+        property: formData.property,
+        booking: state.bookingId,
+        comment: formData.message,
+        rating: formData.rating,
+        image: formData.image
+      };
+
+      if (formData.reviewId) {
+        await axios.put(`${BASE_URL}/reviews/${formData.reviewId}`, reviewPayload);
+        toast.success("Review updated successfully");
+      } else {
+        await axios.post(`${BASE_URL}/reviews/`, reviewPayload);
+        toast.success("Review submitted successfully");
+      }
+
     } catch (error) {
       console.error("Error sending review:", error);
       toast.error("Message failed to send");
