@@ -9,7 +9,7 @@ export default defineConfig({
     proxy: {
       "/api": {
         target: "https://intothewildstays.in",
-        target: "http://localhost:5174", // Uncomment for local development
+        // target: "http://localhost:5000", // Uncomment for local development
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
         secure: false,
