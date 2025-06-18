@@ -18,6 +18,7 @@ temp/
 
 # Environment variables
 .env
+.env.production
 *.local
 
 # Editor settings

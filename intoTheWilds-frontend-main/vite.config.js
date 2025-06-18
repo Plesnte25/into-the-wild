@@ -8,7 +8,8 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://into-the-wild-2gp2.onrender.com",
+        target: "https://intothewildstays.in",
+        target: "http://localhost:5174", // Uncomment for local development
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
         secure: false,

@@ -30,8 +30,7 @@ app.use(
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",
-      "https://into-the-wild-static.onrender.com",
+      "http://localhost:5174",
       "https://intothewildstays.in",
       "https://www.intothewildstays.in",
     ],
