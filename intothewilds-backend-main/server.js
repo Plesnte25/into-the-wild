@@ -16,6 +16,7 @@ const reviewsRoutes = require("./routes/reviewRoutes");
 const airbnbRoutes = require("./routes/calendarRoutes");
 const rateLimiter = require("express-rate-limit");
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const reservationRoute = require("./routes/reservationRoute");
 
 dotenv.config();
 
@@ -72,6 +73,7 @@ app.get("/", (req, res) => {
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/inventory", inventoryRoutes);
 app.use("/api/v1/booking", bookingRoutes);
+app.use("/api/v1/reservation", reservationRoute);
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/properties", propertiesRoutes);
 app.use("/api/v1/contact", contactRoutes);

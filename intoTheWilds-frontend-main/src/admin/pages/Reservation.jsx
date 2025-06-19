@@ -22,23 +22,23 @@ import { api } from "@/api";
 import useReservation from "../hooks/useReservation";
 
 // Mock Data
-const MOCK_PROPERTIES = Array.from({ length: 25 }).map((_, idx) => ({
-  id: `PROP-${1000 + idx}`,
-  name: `Villa Serenity ${idx + 1}`,
-  location: ["Goa", "Assam", "Rishikesh", "Jaipur"][idx % 4],
-  owner: "John Doe",
-  status: idx % 4 === 0 ? "Pending" : "Live",
-  rooms: 8 + (idx % 5),
-  contact: "+91 9876543210",
-  occupied: 3 + (idx % 5),
-  vacant: 5 - (idx % 3),
-}));
+// const MOCK_PROPERTIES = Array.from({ length: 25 }).map((_, idx) => ({
+//   id: `PROP-${1000 + idx}`,
+//   name: `Villa Serenity ${idx + 1}`,
+//   location: ["Goa", "Assam", "Rishikesh", "Jaipur"][idx % 4],
+//   owner: "John Doe",
+//   status: idx % 4 === 0 ? "Pending" : "Live",
+//   rooms: 8 + (idx % 5),
+//   contact: "+91 9876543210",
+//   occupied: 3 + (idx % 5),
+//   vacant: 5 - (idx % 3),
+// }));
 
 // Summary Component
 function Summary() {
-  const total = MOCK_PROPERTIES.length;
-  const live = MOCK_PROPERTIES.filter((p) => p.status === "Live").length;
-  const pending = MOCK_PROPERTIES.filter((p) => p.status === "Pending").length;
+  const total = data.length;
+  const live = data.filter(b=>b.status === "Live").length;
+  const pending = data.filter(b=>b.status === "Pending").length;
   const inactive = total - live - pending;
 
   const cards = [
@@ -116,8 +116,9 @@ function EditBooking({ property }) {
 // Main Reservation Component
 
 export default function Reservation() {
+  const [range, setRange] = React.useState("month");
   const navigate = useNavigate();
-  const { data, isLoading, isError } = useReservation("month");
+  const { data = [], isLoading, isError } = useReservation("month");
 
   if (isLoading) return <div>Loading bookings...</div>;
   if (isError) {
@@ -193,6 +194,18 @@ export default function Reservation() {
           {" "}
           <Plus size={16} /> Add New
         </Button>
+      </div>
+      <div className="mb-6 flex gap-2">
+        {["week", "month", "year"].map((r) => (
+          <Button
+            key={r}
+            variant={r === range ? "default" : "ghost"}
+            size="sm"
+            onClick={() => setRange(r)}
+          >
+            {r.charAt(0).toUpperCase() + r.slice(1)}
+          </Button>
+        ))}
       </div>
 
       <Summary />

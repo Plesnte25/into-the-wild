@@ -23,7 +23,7 @@ import Dashboard from "../admin/pages/Dashboard";
 import Reservation from "../admin/pages/Reservation";
 import Realty from "../admin/pages/Realty";
 import Settings from "../admin/pages/Settings";
-import PropertyDashboard from "@/admin/pages/Property";
+// import PropertyDashboard from "@/admin/pages/Property";
 
 
 const blogs = [];
@@ -111,7 +111,7 @@ const router = createBrowserRouter([
       { path: "reservation", element:<Reservation/>},
       { path: "realty", element:<Realty/>},
       { path: "settings", element:<Settings/>},
-      {path:"property",element:<PropertyDashboard/>},
+      // {path:"property",element:<PropertyDashboard/>},
     ]
   },
 ]);

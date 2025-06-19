@@ -42,7 +42,7 @@ export default function Sidebar({ collapsed, toggle, onExit }) {
         aria-label="Toggle Sidebar"
         className="w-full flex justify-center p-3 hover:bg-slate-800 text-white text-sm md:text-base"
       >
-        {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+        {collapsed ? <ChevronRight size={20}/> : <ChevronLeft size={20} />}
       </button>
 
       <nav className="flex flex-col gap-2 px-2">

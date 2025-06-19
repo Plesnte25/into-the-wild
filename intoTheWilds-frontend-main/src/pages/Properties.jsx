@@ -69,33 +69,49 @@ const Properties = () => {
     fetchProperties();
   }, []);
 
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    console.log(urlParams);
-    const location = urlParams.get("location") || "";
-    const checkIn = urlParams.get("checkIn") || "";
-    const checkOut = urlParams.get("checkOut") || "";
-    const adults = urlParams.get("adults")
-      ? parseInt(urlParams.get("adults"))
-      : 1;
-    const children = urlParams.get("children")
-      ? parseInt(urlParams.get("children"))
-      : 0;
+  // useEffect(() => {
+  //   const urlParams = new URLSearchParams(window.location.search);
+  //   console.log(urlParams);
+  //   const location = urlParams.get("location") || "";
+  //   const checkIn = urlParams.get("checkIn") || "";
+  //   const checkOut = urlParams.get("checkOut") || "";
+  //   const adults = urlParams.get("adults")
+  //     ? parseInt(urlParams.get("adults"))
+  //     : 1;
+  //   const children = urlParams.get("children")
+  //     ? parseInt(urlParams.get("children"))
+  //     : 0;
 
-    // Check if parameters are stored in sessionStorage
-    const storedParams = sessionStorage.getItem("searchParams");
-    console.log(storedParams);
-    if (storedParams) {
-      const { location, checkIn, checkOut, adults, children } =
-        JSON.parse(storedParams);
-      setSearchParams({ location, checkIn, checkOut, adults, children });
-      if (location) {
-        handleFilterChange({ location: location });
+  //   // Check if parameters are stored in sessionStorage
+  //   const storedParams = sessionStorage.getItem("searchParams");
+  //   console.log(storedParams);
+  //   if (storedParams) {
+  //     const { location, checkIn, checkOut, adults, children } =
+  //       JSON.parse(storedParams);
+  //     setSearchParams({ location, checkIn, checkOut, adults, children });
+  //     if (location) {
+  //       handleFilterChange({ location: location });
+  //     }
+  //   } else {
+  //     navigate("/properties", { replace: true });
+  //   }
+  // }, [properties]);
+
+  useEffect(() => {
+    const stored = sessionStorage.getItem("searchParams");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      setSearchParams(parsed);
+      if (parsed.location) {
+        handleFilterChange({ location: parsed.location });
+        return;
       }
-    } else {
-      navigate("/properties", { replace: true });
+      else {
+        navigate("/properties", { replace: true });
+      }
     }
   }, [properties]);
+
   useEffect(() => {
     const handleBeforeUnload = () => {
       sessionStorage.removeItem("searchParams");
@@ -486,7 +502,7 @@ const Properties = () => {
           >
             <div className="grid gap-4 sm:gap-6 md:gap-8">
               {isLoading
-                ? [...Array(3)]?.map((_, index) => (
+                ? Array.from({ length: 3 }).map((_, index) => (
                     <PropertyShimmer key={index} />
                   ))
                 : filteredProperties?.map((property, index) => (

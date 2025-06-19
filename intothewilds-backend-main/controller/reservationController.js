@@ -23,7 +23,6 @@ if (!doc)
   return res.status(404).json({ status: "fail", message: "No Booking" });
 res.status(200).json({ status: "success", data: doc });
 
-
 exports.updateBooking = async (req, res) => {
   const { status, checkoutDate } = req.body;
   const update = {};
@@ -33,4 +32,28 @@ exports.updateBooking = async (req, res) => {
     new: true,
   });
   res.json(bk);
+};
+
+// Filter data
+exports.getByRange = async (req, res, next) => {
+  const { range = "month" } = req.params;
+  //bookings range
+  const now = new Date();
+  let from;
+  switch (range) {
+    case "week":
+      from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+      break;
+    case "year":
+      from = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+      break;
+    default:
+      from = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+  }
+  const bookings = await Booking.find({
+    createdAt: { $gte: from },
+  })
+    .populate("property", "name location")
+    .lean();
+  res.json(bookings);
 };

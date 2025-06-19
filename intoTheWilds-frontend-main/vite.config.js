@@ -8,8 +8,8 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://intothewildstays.in",
-        // target: "http://localhost:5000", // Uncomment for local development
+        // target: "https://intothewildstays.in",
+        target: "http://localhost:5173", // Uncomment for local development
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
         secure: false,

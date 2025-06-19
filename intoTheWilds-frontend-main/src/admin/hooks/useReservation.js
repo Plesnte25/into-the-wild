@@ -1,34 +1,13 @@
-import useSWR from "swr";
-import { api } from "/src/api";
+import {useQuery} from "@tanstack/react-query";
+import { api } from "@/api";
 
 export default function useReservation(range = "month") {
-  const token = localStorage.getItem("token");
-
-  const { data, error, mutate, isLoading } = useSWR(
-    token ? `/booking/userBookings?range=${range}` : null,
-    async (url) => {
-      try {
-        const res = await api.get(url, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        return res.data.data;
-      } catch (err) {
-        console.error("Fetch Error:", err);
-        throw err;
-      }
+  return useQuery({
+    queryKey: ["reservations", range],
+    queryFn: async () => {
+      const { data } = await api.get(`/bookings/range/${range}`);
+      return data;                 // array of bookings
     },
-    {
-      revalidateOnFocus: false,
-      shouldRetryOnError: false,
-      revalidateIfFalse: false,
-    }
-  );
-  return {
-    data: data || [],
-    isLoading: !error && !data,
-    isError: error,
-    mutate,
-  };
+    staleTime: 1000 * 60 * 5,      // 5 min
+  });
 }
