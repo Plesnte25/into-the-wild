@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const User = require("../models/User");
 require("dotenv").config();
+const { OAuth2Client } = require("google-auth-library");
 
 function buildTransporter() {
   const { EMAIL_HOST, EMAIL_USER, EMAIL_PASS, EMAIL_PORT } = process.env;
@@ -296,16 +297,33 @@ exports.getAllUsers = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 exports.googleSignup = async (req, res) => {
   try {
-    const response = req.body;
-    const clientId = response.clientId;
-    const clientCredentials = response.credential;
-    const jwtDecode = decode(clientCredentials);
-    const user = await findOne({ email: jwtDecode.email });
+    console.log("you reached here");
+    const { credential } = req.body;
+    console.log(credential);
+
+    // Validate that credential is a non-empty string
+    if (typeof credential !== "string" || !credential.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Google credential. Must be a non-empty string.",
+      });
+    }
+
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { email, name, picture, sub } = payload;
+
+    let user = await User.findOne({ email });
+
     if (user) {
-      const token = sign(
+      const token = jwt.sign(
         { userId: user._id, role: user.role },
         process.env.JWT_SECRET,
         { expiresIn: "1h" }
@@ -324,36 +342,58 @@ exports.googleSignup = async (req, res) => {
         message: "Signed in successfully",
       });
     }
-    const newUser = new User({
-      email: jwtDecode.email,
-      name: jwtDecode.name,
-      clientId: clientId,
+
+    // New user creation
+    user = new User({
+      email,
+      name,
       isVerified: true,
-      avatar: jwtDecode.picture,
+      avatar: picture,
+      googleId: sub,
     });
-    await newUser.save();
-    const token = sign(
-      { userId: newUser._id, role: newUser.role },
+
+    await user.save();
+
+    const token = jwt.sign(
+      { userId: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
+
     res.status(201).json({
       success: true,
       token,
       user: {
-        _id: newUser._id,
-        name: newUser.name,
-        email: newUser.email,
-        phone: newUser.phone,
-        avatar: newUser.avatar,
-        role: newUser.role,
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        avatar: user.avatar,
+        role: user.role,
       },
       message: "Signed up successfully",
     });
   } catch (err) {
+    console.error("Google signup error:", err.message);
+
+    // Handle invalid token errors specifically
+    if (err.message.includes("The verifyIdToken method requires an ID Token")) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing or invalid Google ID token.",
+      });
+    }
+
+    if (err.message.includes("jwt.split is not a function")) {
+      return res.status(400).json({
+        success: false,
+        message: "Malformed token: Expected a string but received something else.",
+      });
+    }
+
     res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: "Internal server error during Google signup.",
     });
   }
 };

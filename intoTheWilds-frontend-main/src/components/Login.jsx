@@ -65,28 +65,30 @@ const Login = () => {
     }
   };
 
-  const handleGoogleLogin = async (response) => {
-    setIsLoading(true);
-    try {
-      const res = await googleSignup(response);
-      console.log(res);
-      toast.success(res.data.message);
-      // Add isGoogleUser flag to user object
-      const userWithFlag = { ...res.data.user, isGoogleUser: true };
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(userWithFlag));
-      setIsLoading(false);
-      setShowSuccessDialog(true);
-      setTimeout(() => {
-        setShowSuccessDialog(false);
-        navigate("/", { state: { user: userWithFlag } });
-      }, 2000);
-    } catch (error) {
-      console.error("Google login failed:", error);
-      toast.error("Google login failed.");
-      setIsLoading(false);
-    }
-  };
+const handleGoogleLogin = async (credentialResponse) => {
+  setIsLoading(true);
+  console.log(credentialResponse);
+  try {
+    const res = await axios.post(`${BASE_URL}/auth/google`, {
+      credential: credentialResponse.credential, // ✅ backend expects only this
+    });
+
+    const { token, user } = res.data;
+
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify({ ...user, isGoogleUser: true }));
+
+    toast.success("Google login successful");
+    navigate("/user-profile", { state: { user } });
+  } catch (error) {
+    console.error("Google login failed:", error);
+    toast.error("Google login failed.");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
 
   const handleOtpSubmit = async () => {
     try {

@@ -26,7 +26,7 @@ export default function AdminLayout() {
         <Sidebar
           collapsed={collapsed}
           toggle={toggleSidebar}
-          onExit={() => navigate("/user-")}
+          onExit={() => navigate("/user-profile")}
         />
       </div>
 

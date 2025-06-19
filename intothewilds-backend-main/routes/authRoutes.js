@@ -29,7 +29,7 @@ const authController = require('../controller/authController')
 
 // Register Route
 router.post('/register',authController.register);
-router.post('/google-signup',authController.googleSignup);
+router.post('/google',authController.googleSignup);
 
 // Login Route
 router.post('/login', authController.login);
